@@ -1,10 +1,7 @@
 package challonge;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import scoreboard.ScoreboardModel;
-
 import java.util.HashMap;
-
-import static java.lang.Math.abs;
 
 @JsonIgnoreProperties(ignoreUnknown = true)     //JSON string has more fields than we care about
 public class Match {
@@ -116,7 +113,7 @@ public class Match {
     }
 
     public boolean isComplete(){
-        return this.state.equals("complete");
+        return state.equals("complete");
     }
 
     public String toString(){

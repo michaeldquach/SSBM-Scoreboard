@@ -7,107 +7,49 @@ import challonge.Tournament;
 import java.util.ArrayList;
 
 public class ScoreboardModel {
-    private String tournamentName;
-    private String player1Name;
-    private String player2Name;
-    private int player1Score, player2Score, player1Port, player2Port, roundNumber;
-
     private ArrayList<Tournament> tournaments;
     private ArrayList<Participant> participants;
     private ArrayList<Match> matches;
+
+    private String P1Name, P2Name, P1Char, P2Char, roundString, tournamentName, commentatorName;
+    private int P1Score, P2Score, P1Port, P2Port;
+    private boolean challongeLoggedIn;
+
+    private Participant player1, player2;
     private Tournament currentTournament;
     private Match currentMatch;
-    private Participant player1, player2;
-
 
     public ScoreboardModel(){
-        tournamentName = "";
+        //Fields for OBS
+        P1Name = null;
+        P2Name = null;
+
+        P1Score = 0;
+        P2Score = 0;
+
+        P1Port = 0;
+        P2Port = 0;
+
+        P1Char = null;
+        P2Char = null;
+
+        roundString = null;
+        tournamentName = null;
+        commentatorName = null;
+
+        //Fields for challonge
+        challongeLoggedIn = false;
         player1 = null;
         player2 = null;
-        //player1Name = "Player 1";
-        //player2Name = "Player 2";
-        player1Score = 0;
-        player2Score = 0;
-        player1Port = 1;
-        player2Port = 2;
-        roundNumber = 0;
         currentTournament = null;
         currentMatch = null;
+
         tournaments = new ArrayList<Tournament>();
         participants = new ArrayList<Participant>();
         matches = new ArrayList<Match>();
     }
 
-    //might make sense for this function to exist in view only?
-    public void swapPlayers(){
-        Participant tempPlayer = player1;
-        int tempScore = player1Score;
-        int tempPort = player1Port;
-
-        player1 = player2;
-        player1Score = player2Score;
-        player1Port = player2Port;
-
-        player2 = tempPlayer;
-        player2Score = tempScore;
-        player2Port = tempPort;
-    }
-
-    public boolean pushMatchInfo(){
-        if(currentMatch != null && player1 != null && player2 != null){     //Might make function to grab match when match is null, but players are not (e.g. selected from drop down)
-            Integer winnerID;
-            if(player1.getId() == currentMatch.getPlayer1_id()){        //if player1's id in the scoreboard matches player1 in challonge
-                //System.out.println("they match");
-
-                if(player1Score > player2Score){        //if player1 won the match
-                    winnerID = player1.getId();
-                }
-                else if(player2Score > player1Score){       //if player2 won the match
-                    winnerID = player2.getId();
-                }
-                else{
-                    winnerID = null;        //Tie, this shouldn't occur todo maybe make this default to player 1
-                }
-                ChallongeAPI.putMatchResults(currentTournament.getId(), currentMatch.getId(), player1Score, player2Score, winnerID);
-                return true;
-            }
-
-            else if(player1.getId() == currentMatch.getPlayer2_id()){       //if player1's id matches player2 in challonge (because of ordering)
-
-                if(player1Score > player2Score){        //if player1 won the match
-                    winnerID = player1.getId();
-                }
-                else if(player2Score > player1Score){       //if player2 won the match
-                    winnerID = player2.getId();
-                }
-                else{
-                    winnerID = null;        //Tie, this shouldn't occur
-                }
-                ChallongeAPI.putMatchResults(currentTournament.getId(), currentMatch.getId(), player2Score, player1Score, winnerID);
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public boolean pullMatchInfo(){
-        if(currentMatch != null){
-            player1 = currentMatch.getPlayer1();
-            player2 = currentMatch.getPlayer2();
-            roundNumber = currentMatch.getRound();
-            return true;
-        }
-        return false;
-    }
-
-    public void resetMatchInfo(){
-        player1Score = 0;
-        player2Score = 0;
-        player1Port = 1;
-        player2Port = 2;
-        roundNumber = 0;
-    }
-
+    //generates list of tournaments from JSON
     public void pullTournamentList(){
         tournaments = ChallongeAPI.getTournamentList();
     }
@@ -130,7 +72,7 @@ public class ScoreboardModel {
 
     public boolean pullParticipantList(){
         if(currentTournament != null){
-            setParticipants(ChallongeAPI.getParticipantList(currentTournament.getId()));
+            participants = ChallongeAPI.getParticipantList(currentTournament.getId());
             return true;
         }
         return false;
@@ -172,65 +114,164 @@ public class ScoreboardModel {
         return null;
     }
 
+
+    public boolean pushMatchInfo(){
+        //todo check if challonge logged in, check if current tournament is null
+        //somehow only trigger after saving, with no changes noted
+
+        if(currentMatch != null && player1 != null && player2 != null){     //Might make function to grab match when match is null, but players are not (e.g. selected from drop down)
+            Integer winnerID;
+            if(player1.getId() == currentMatch.getPlayer1_id()){        //if player1's id in the scoreboard matches player1 in challonge
+                //System.out.println("they match");
+
+                if(P1Score > P2Score){        //if player1 won the match
+                    winnerID = player1.getId();
+                }
+                else if(P2Score > P1Score){       //if player2 won the match
+                    winnerID = player2.getId();
+                }
+                else{
+                    winnerID = null;        //Tie, this shouldn't occur todo maybe make this default to player 1
+                }
+                ChallongeAPI.putMatchResults(currentTournament.getId(), currentMatch.getId(), P1Score, P2Score, winnerID);
+                return true;
+            }
+
+            else if(player1.getId() == currentMatch.getPlayer2_id()){       //if player1's id matches player2 in challonge (because of ordering)
+
+                if(P1Score > P2Score){        //if player1 won the match
+                    winnerID = player1.getId();
+                }
+                else if(P2Score > P1Score){       //if player2 won the match
+                    winnerID = player2.getId();
+                }
+                else{
+                    winnerID = null;        //Tie, this shouldn't occur
+                }
+                ChallongeAPI.putMatchResults(currentTournament.getId(), currentMatch.getId(), P2Score, P1Score, winnerID);
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    public void saveInfo(String P1Name, String P2Name, int P1Score, int P2Score, int P1Port, int P2Port, String P1Char, String P2Char, String roundString, String tournamentName, String commentatorName, Match currentMatch){
+        this.P1Name = P1Name;
+        this.P2Name = P2Name;
+        this.P1Score = P1Score;
+        this.P2Score = P2Score;
+        this.P1Port = P1Port;
+        this.P2Port = P2Port;
+        this.P1Char = P1Char;
+        this.P2Char = P2Char;
+        this.roundString = roundString;
+        this.tournamentName = tournamentName;
+        this.commentatorName = commentatorName;
+
+        this.currentMatch = currentMatch;
+        if(currentMatch != null){
+            if(currentMatch.getPlayer1Name().equals(P1Name) && currentMatch.getPlayer2Name().equals(P2Name)){       //check that order of player names matches order of Participant Players
+                this.player1 = currentMatch.getPlayer1();                                                           //so we don't accidentally attribute the scores backwards (e.g. after player swaps in GUI)
+                this.player2 = currentMatch.getPlayer2();
+            }
+            else if(currentMatch.getPlayer1Name().equals(P2Name) && currentMatch.getPlayer2Name().equals(P1Name)){
+                this.player2 = currentMatch.getPlayer1();
+                this.player1 = currentMatch.getPlayer2();
+            }
+        }
+        else{
+            this.player1 = null;
+            this.player2 = null;
+        }
+
+        //OUTPUT to OBS debug
+        //Players
+        System.out.println("P1: " + this.P1Name);
+        System.out.println("P2: " + this.P2Name);
+
+        //Scores
+        System.out.println("P1 Score: " + this.P1Score);
+        System.out.println("P2 Score: " + this.P2Score);
+
+        //Ports
+        System.out.println("P1 Port: " + this.P1Port);
+        System.out.println("P2 Port: " + this.P2Port);
+
+        //Characters
+        System.out.println("P1 Char: " + this.P1Char);
+        System.out.println("P2 Char: " + this.P2Char);
+
+        //Match Info
+        System.out.println("Bracket Round: " + this.roundString);
+        System.out.println("Tournament: " + this.tournamentName);
+        System.out.println("Commentators: " + this.commentatorName);
+
+        //Challonge Info
+        System.out.println("Current Tournament: " + this.currentTournament);
+        System.out.println("Current Match: " + this.currentMatch);
+        System.out.println("Player 1: " + this.player1);
+        System.out.println("Player 2: " + this.player2);
+    }
+
+    //Is it necessary to reset data within the model? We will save over with null values anyway
+    public void reset(boolean completeReset){
+        P1Name = null;
+        P2Name = null;
+
+        P1Score = 0;
+        P2Score = 0;
+
+        P1Port = 1;
+        P2Port = 2;
+
+        P1Char = null;
+        P2Char = null;
+
+        roundString = null;
+        tournamentName = null;
+        commentatorName = null;
+
+        if(completeReset){
+            player1 = null;
+            player2 = null;
+            currentTournament = null;
+            currentMatch = null;
+            tournaments = new ArrayList<Tournament>();
+            participants = new ArrayList<Participant>();
+            matches = new ArrayList<Match>();
+        }
+    }
+
+    //logs into challonge and pulls tournament list
+    public void challongeLogin(String username, String password){
+        ChallongeAPI.setCredentials(username, password);         //Set credentials from api field
+
+        //todo if successful login, save API_KEY to config file
+        pullTournamentList();         //populate list of tournaments
+        challongeLoggedIn = true;
+    }
+
+    //generates participant and match list from selected tournament to load
+    public void loadTournament(Tournament loadedTournament){
+        this.currentTournament = loadedTournament;
+        if(currentTournament != null){
+            tournamentName = currentTournament.getName();
+        }
+        pullParticipantList();
+        pullMatchList();
+    }
+
     //Method for initializing model from a config file
     //todo make it read from a config file
     public static ScoreboardModel loadModel(){
         ScoreboardModel model = new ScoreboardModel();
-        ChallongeAPI.setCredentials("Sasquach_", "0jjHgAoqDH85DjAdKnWdRIRCecr5CktpePisHH7d");
-        model.pullTournamentList();
+        //ChallongeAPI.setCredentials("Sasquach_", "0jjHgAoqDH85DjAdKnWdRIRCecr5CktpePisHH7d");     //old
+        //model.pullTournamentList();
 
         return model;
     }
 
     //Getters and Setters
-
-    public String getTournamentName(){
-        return tournamentName;
-    }
-
-    public Participant getPlayer1(){
-        return player1;
-    }
-
-    public Participant getPlayer2() {
-        return player2;
-    }
-
-    public String getPlayer1Name(){
-        return player1Name;
-    }
-
-    public String getPlayer2Name(){
-        return player2Name;
-    }
-
-    public int getPlayer1Score(){
-        return player1Score;
-    }
-
-    public int getPlayer2Score(){
-        return player2Score;
-    }
-
-    public int getPlayer1Port() {
-        return player1Port;
-    }
-
-    public int getPlayer2Port() {
-        return player2Port;
-    }
-
-    public int getRoundNumber(){
-        return roundNumber;
-    }
-
-    public Tournament getCurrentTournament() {
-        return currentTournament;
-    }
-
-    public Match getCurrentMatch(){
-        return currentMatch;
-    }
 
     public ArrayList<Tournament> getTournaments(){
         return tournaments;
@@ -240,43 +281,15 @@ public class ScoreboardModel {
         return matches;
     }
 
-    public ArrayList<Participant> getParticipants() {
+    public ArrayList<Participant> getParticipants(){
         return participants;
     }
 
-    public void setTournamentName(String tournamentName){
-        this.tournamentName = tournamentName;
+    public boolean isChallongeLoggedIn(){
+        return challongeLoggedIn;
     }
 
-    public void setPlayer1Name(String player1Name) {
-        this.player1Name = player1Name;
-    }
-
-    public void setPlayer2Name(String player2Name) {
-        this.player2Name = player2Name;
-    }
-
-    public void setPlayer1Score(int player1Score) {
-        this.player1Score = player1Score;
-    }
-
-    public void setPlayer2Score(int player2Score) {
-        this.player2Score = player2Score;
-    }
-
-    public void setCurrentTournament(Tournament currentTournament){
-        this.currentTournament = currentTournament;
-        if(currentTournament != null){
-            setTournamentName(currentTournament.getName());
-        }
-    }
-
-    public void setCurrentMatch(Match currentMatch){
-        this.currentMatch = currentMatch;
-        //Set round number here too
-    }
-
-    public void setParticipants(ArrayList<Participant> participants){
-        this.participants = participants;
+    public Tournament getCurrentTournament(){
+        return currentTournament;
     }
 }

@@ -1,10 +1,10 @@
 package scoreboard;
 
+import challonge.Tournament;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
-import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 public class ScoreboardApp extends Application {
@@ -15,10 +15,19 @@ public class ScoreboardApp extends Application {
         model = ScoreboardModel.loadModel();
         view = new ScoreboardView(model);
 
+        ScorePane scorePane = view.getScorePane();
+        ChallongePane challongePane = view.getChallongePane();
+
         //View handling code
 
-        //ScorePane buttons
-        ScorePane scorePane = view.getScorePane();
+            //Buttons
+        scorePane.getSwapButton().setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                handleSwap();
+            }
+        });
+
         scorePane.getSaveButton().setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
@@ -26,24 +35,24 @@ public class ScoreboardApp extends Application {
             }
         });
 
-        scorePane.getLoadTournamentButton().setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent actionEvent) {
-                handleLoadTournament();
-            }
-        });
-
         scorePane.getResetButton().setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                handleReset();
+                handleReset(false);
             }
         });
 
-        scorePane.getSwapButton().setOnAction(new EventHandler<ActionEvent>() {
+        challongePane.getLoginButton().setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                handleSwap();
+                handleChallongeLogin("Sasquach_", challongePane.getAPIKey());
+            }
+        });
+
+        challongePane.getLoadTournamentButton().setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                handleLoadTournament(challongePane.getTournamentDropDown().getSelectionModel().getSelectedItem());
             }
         });
 
@@ -55,6 +64,7 @@ public class ScoreboardApp extends Application {
         });
 
         //Non-view handling code
+
         primaryStage.setTitle("SSBM Scoreboard Manager");
         primaryStage.setResizable(false);
         primaryStage.setScene(new Scene(view, 700, 450));
@@ -66,28 +76,32 @@ public class ScoreboardApp extends Application {
         launch(args);
     }
 
-    public void handleSave(){
-        view.handleSave();
-    }
-
-    public void handleLoadTournament(){
-        //loads the selected tournament from the comboBox and pulls data from it
-        model.setCurrentTournament(view.getScorePane().getTournamentDropDown().getSelectionModel().getSelectedItem());
-        model.pullParticipantList();
-        model.pullMatchList();
-        view.getScorePane().loadTournament();
-    }
-
-    public void handleReset(){
-        model.resetMatchInfo();
-        view.getScorePane().reset();
-    }
-
     public void handleSwap(){
-        view.getScorePane().swap();
+        view.swap();
+    }
+
+    public void handleSave(){
+        view.save();
+    }
+
+    public void handleReset(boolean completeReset){
+        model.reset(completeReset);
+        view.reset(completeReset);
+    }
+
+    public void handleChallongeLogin(String username, String password){
+        handleReset(true);
+        model.challongeLogin(username, password);
+        view.challongeLogin();
+    }
+
+    public void handleLoadTournament(Tournament loadedTournament){
+        model.loadTournament(loadedTournament);        //loads the selected tournament from the comboBox and pulls data from it
+        view.loadTournament(loadedTournament);
     }
 
     public void handleTest(){
+        /*
         System.out.println(Font.getDefault());
         System.out.println(model.getPlayer1() + ": " + model.getPlayer1Score());
         System.out.println(model.getPlayer2() + ": " + model.getPlayer2Score());
@@ -96,6 +110,8 @@ public class ScoreboardApp extends Application {
         System.out.println(model.getMatches());
         System.out.println(model.getCurrentMatch());
         System.out.println(model.getCurrentTournament().getMaxRound());
+
+         */
     }
 }
 

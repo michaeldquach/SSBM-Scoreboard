@@ -1,7 +1,7 @@
 package challonge;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import scoreboard.ScoreboardModel;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -60,7 +60,7 @@ public class ChallongeAPI {
     public static String get(String url, int timeout){
         try{
             URL website = new URL(url + "?api_key=" + API_KEY);
-            //System.out.println(website);      //to get url used to interface with API
+            //System.out.println(website);      //Debug to get url used to interface with API
             URLConnection connection = website.openConnection();
             connection.setConnectTimeout(timeout);
 
@@ -150,36 +150,6 @@ public class ChallongeAPI {
     public static void setCredentials(String username, String password){
         USERNAME = username;
         API_KEY = password;
-    }
-
-    public static void main(String[] args) throws Exception {
-        setCredentials("Sasquach_", "0jjHgAoqDH85DjAdKnWdRIRCecr5CktpePisHH7d");
-
-        ScoreboardModel testing = new ScoreboardModel();
-
-        testing.pullTournamentList();
-        testing.setCurrentTournament(testing.getTournaments().get(0));
-        testing.pullParticipantList();
-        System.out.println(testing.getParticipants());
-        testing.pullMatchList();
-        System.out.println(testing.getMatches());
-        testing.setCurrentMatch(testing.getMatches().get(3));
-        testing.pullMatchInfo();
-
-
-        //testing swaps
-        System.out.println(testing.getPlayer1());
-        System.out.println(testing.getPlayer1Score());
-        System.out.println(testing.getPlayer2());
-        System.out.println(testing.getPlayer2Score());
-        testing.swapPlayers();
-        System.out.println(testing.getPlayer1());
-        System.out.println(testing.getPlayer1Score());
-        System.out.println(testing.getPlayer2());
-        System.out.println(testing.getPlayer2Score());
-        //testing.swapPlayers();
-
-        //testing.pushMatchInfo();
     }
 }
 

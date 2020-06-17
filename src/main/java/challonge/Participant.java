@@ -31,8 +31,6 @@ public class Participant {
         return id;
     }
 
-    //todo make setters
-
     public String toStringOLD(){
         return "Participant: " + name + " (" + id + "). Seed: " + seed;
     }
