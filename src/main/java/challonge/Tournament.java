@@ -8,18 +8,21 @@ public class Tournament {
     private int id;
     private int participants_count;
     private int maxRound;
+    private String full_challonge_url;
 
     public Tournament(){
         name = "";
         id = 0;
         participants_count = 0;
         maxRound = 0;
+        full_challonge_url = null;
     }
 
-    public Tournament(String name, int id, int participants){
+    public Tournament(String name, int id, int participants, String full_challonge_url){
         this.name = name;
         this.id = id;
         this.participants_count = participants;
+        this.full_challonge_url = full_challonge_url;
     }
 
     public String getName(){
@@ -38,11 +41,15 @@ public class Tournament {
         return maxRound;
     }
 
+    public String getFull_challonge_url(){
+        return full_challonge_url;
+    }
+
     public void setMaxRound(int maxRound){
         this.maxRound = maxRound;
     }
 
     public String toString(){
-        return name + ", " + participants_count + " participants. ID: " + id;
+        return name;
     }
 }

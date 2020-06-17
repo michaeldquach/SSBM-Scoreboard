@@ -10,17 +10,17 @@ public class ScoreboardView extends Pane {
 
     public ScoreboardView(ScoreboardModel initModel){
         model = initModel;
+        this.setPrefSize(610,305);      //default size
+
         scorePane = new ScorePane(model, this);
-        scorePane.relocate(50, 25);
+        scorePane.relocate(5, 0);
 
         challongePane = new ChallongePane(model, this);
-        challongePane.relocate(50, 225);
+        challongePane.relocate(5, 205);
+        challongePane.managedProperty().bind(challongePane.visibleProperty());
 
         getChildren().addAll(scorePane, challongePane);
-        this.update();
-
-        TestOutputPane testPane = new TestOutputPane(model);
-        //testPane.relocate();
+        update();
     }
 
     public void update(){
@@ -30,10 +30,26 @@ public class ScoreboardView extends Pane {
 
     public void swap(){
         scorePane.swap();
+        update();
+    }
+
+    public void toggleChallonge(){
+        boolean toggle = model.isToggleChallonge();
+
+        if(toggle){
+            setPrefSize(610,305);
+        }
+        else{
+            setPrefSize(610,205);
+        }
+
+        scorePane.toggleChallonge(toggle);
+        challongePane.toggleChallonge(toggle);
     }
 
     public void save(){
         scorePane.save();
+        update();
     }
 
     public void reset(boolean completeReset){
@@ -43,6 +59,7 @@ public class ScoreboardView extends Pane {
         }         */
         scorePane.reset(completeReset);
         challongePane.reset(completeReset);
+        update();
     }
 
     public void challongeLogin(){
@@ -54,6 +71,11 @@ public class ScoreboardView extends Pane {
         scorePane.loadTournament(loadedTournament);
         challongePane.loadTournament();
         reset(false);
+        update();
+    }
+
+    public void refresh(Tournament currentTournament){
+        challongePane.refresh(currentTournament);
     }
 
     public ScorePane getScorePane() {

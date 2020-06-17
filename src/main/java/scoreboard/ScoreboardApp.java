@@ -1,5 +1,6 @@
 package scoreboard;
 
+import challonge.ChallongeAPI;
 import challonge.Tournament;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
@@ -28,10 +29,25 @@ public class ScoreboardApp extends Application {
             }
         });
 
+        scorePane.getToggleChallongeButton().setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                handleToggleChallonge();
+                primaryStage.sizeToScene();
+            }
+        });
+
         scorePane.getSaveButton().setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
                 handleSave();
+            }
+        });
+
+        scorePane.getUploadButton().setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                handleUpload();
             }
         });
 
@@ -56,10 +72,26 @@ public class ScoreboardApp extends Application {
             }
         });
 
-        scorePane.getTestButton().setOnAction(new EventHandler<ActionEvent>() {
+        challongePane.getRefreshButton().setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                handleTest();
+                handleRefresh();
+            }
+        });
+
+        challongePane.getUrlTournamentButton().setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                if(model.getCurrentTournament() != null){
+                    handleOpenURL(model.getCurrentTournament().getFull_challonge_url());
+                }
+            }
+        });
+
+        challongePane.getUrlAPIButton().setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                handleOpenURL("https://challonge.com/settings/developer");
             }
         });
 
@@ -67,7 +99,8 @@ public class ScoreboardApp extends Application {
 
         primaryStage.setTitle("SSBM Scoreboard Manager");
         primaryStage.setResizable(false);
-        primaryStage.setScene(new Scene(view, 700, 450));
+        primaryStage.setScene(new Scene(view));
+        primaryStage.centerOnScreen();
         primaryStage.show();
         view.update();
     }
@@ -80,8 +113,19 @@ public class ScoreboardApp extends Application {
         view.swap();
     }
 
+    public void handleToggleChallonge(){
+        model.toggleChallonge();
+        view.toggleChallonge();
+    }
+
     public void handleSave(){
         view.save();
+    }
+
+    public void handleUpload(){
+        if(model.uploadMatchInfo(false, false)){
+            handleRefresh();        //updates tournament matches after pushing data
+        }
     }
 
     public void handleReset(boolean completeReset){
@@ -100,49 +144,12 @@ public class ScoreboardApp extends Application {
         view.loadTournament(loadedTournament);
     }
 
-    public void handleTest(){
-        /*
-        System.out.println(Font.getDefault());
-        System.out.println(model.getPlayer1() + ": " + model.getPlayer1Score());
-        System.out.println(model.getPlayer2() + ": " + model.getPlayer2Score());
-        //System.out.println(model.getCurrentMatch().getState());
-        System.out.println(model.getParticipants());
-        System.out.println(model.getMatches());
-        System.out.println(model.getCurrentMatch());
-        System.out.println(model.getCurrentTournament().getMaxRound());
+    public void handleRefresh(){
+        handleLoadTournament(model.getCurrentTournament());
+        view.refresh(model.getCurrentTournament());
+    }
 
-         */
+    public void handleOpenURL(String url){
+        ChallongeAPI.openURL(url);
     }
 }
-
-/*
-setCredentials("Sasquach_", "0jjHgAoqDH85DjAdKnWdRIRCecr5CktpePisHH7d");
-
-    ScoreboardModel testing = new ScoreboardModel();
-
-        testing.pullTournamentList();
-                testing.setCurrentTournament(testing.getTournaments().get(0));
-                testing.pullParticipantList();
-                System.out.println(testing.getParticipants());
-                testing.pullMatchList();
-                System.out.println(testing.getMatches());
-                testing.setCurrentMatch(testing.getMatches().get(3));
-                testing.pullMatchInfo();
-
-
-                //testing swaps
-                System.out.println(testing.getPlayer1());
-                System.out.println(testing.getPlayer1Score());
-                System.out.println(testing.getPlayer2());
-                System.out.println(testing.getPlayer2Score());
-                testing.swapPlayers();
-                System.out.println(testing.getPlayer1());
-                System.out.println(testing.getPlayer1Score());
-                System.out.println(testing.getPlayer2());
-                System.out.println(testing.getPlayer2Score());
-                //testing.swapPlayers();
-
-                //testing.pushMatchInfo();
-                }
-
- */

@@ -1,7 +1,9 @@
 package challonge;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import scoreboard.ScoreboardModel;
 import java.util.HashMap;
+import static java.lang.Math.abs;
 
 @JsonIgnoreProperties(ignoreUnknown = true)     //JSON string has more fields than we care about
 public class Match {
@@ -94,11 +96,11 @@ public class Match {
             prefix = "Losers ";
         }
 
-        if(suffixList.containsKey(this.round)){
-            suffix = suffixList.get(this.round);
+        if(suffixList.containsKey(abs(this.round))){
+            suffix = suffixList.get(abs(this.round));
         }
         else{
-            suffix = "Round " + this.round;
+            suffix = "Round " + abs(this.round);
         }
         return prefix + suffix;
     }

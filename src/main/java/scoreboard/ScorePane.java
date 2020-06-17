@@ -21,7 +21,7 @@ public class ScorePane extends Pane {
     private ComboBox<String> P1DropDown, P2DropDown, P1CharDropDown, P2CharDropDown;
     private ComboBox<Integer> P1PortDropDown, P2PortDropDown;
     private TextField tournamentRoundField, tournamentNameField, commentatorsField;
-    private Button refreshButton, saveButton, uploadButton, resetButton, swapButton, testButton;
+    private Button swapButton, toggleChallongeButton, saveButton, uploadButton, resetButton;
     private EventHandler<ActionEvent> P1DropDownEventHandler, P2DropDownEventHandler;
 
     public ScorePane(ScoreboardModel initModel, ScoreboardView initView){
@@ -47,6 +47,14 @@ public class ScorePane extends Pane {
                 return c;
             }
         }));
+        P1ScoreSpinner.getEditor().textProperty().addListener((obs, oldValue, newValue) -> {
+            if (!"".equals(newValue)) {                 //flags if change is made to field required to push to challonge, without saving that change
+                if(model.isReadyToPush()){
+                    model.setReadyToPush(false);
+                    update();
+                }
+            }
+        });
         P1ScoreSpinner.setNodeOrientation(NodeOrientation.RIGHT_TO_LEFT);
         P1ScoreSpinner.setPrefSize(60, 25);
         P1ScoreSpinner.relocate(200,row1Y);
@@ -64,6 +72,14 @@ public class ScorePane extends Pane {
                 return c;
             }
         }));
+        P2ScoreSpinner.getEditor().textProperty().addListener((obs, oldValue, newValue) -> {
+            if (!"".equals(newValue)) {                 //flags if change is made to field required to push to challonge, without saving that change
+                if(model.isReadyToPush()){
+                    model.setReadyToPush(false);
+                    update();
+                }
+            }
+        });
         P2ScoreSpinner.setPrefSize(60, 25);
         P2ScoreSpinner.relocate(340,row1Y);
 
@@ -78,6 +94,11 @@ public class ScorePane extends Pane {
             public void handle(ActionEvent actionEvent) {
                 //System.out.println("updating from p1listcombo");
                 challongePane.updateMatchFromPlayers(P1DropDown, P2DropDown);
+
+                if(model.isReadyToPush()){              //flags if change is made to field required to push to challonge, without saving that change
+                    model.setReadyToPush(false);
+                    update();
+                }
             }
         };
         P1DropDown.setNodeOrientation(NodeOrientation.RIGHT_TO_LEFT);
@@ -93,6 +114,11 @@ public class ScorePane extends Pane {
             public void handle(ActionEvent actionEvent) {
                 //System.out.println("updating from p2listcombo");
                 challongePane.updateMatchFromPlayers(P2DropDown, P1DropDown);
+
+                if(model.isReadyToPush()){              //flags if change is made to field required to push to challonge, without saving that change
+                    model.setReadyToPush(false);
+                    update();
+                }
             }
         };
         P2DropDown.setPromptText("Player 2");
@@ -112,7 +138,7 @@ public class ScorePane extends Pane {
 
         P1CharDropDown = new ComboBox<String>();
         P1CharDropDown.setItems(characterList);
-        P1CharDropDown.setPromptText("Select P1 Character");            //Extremely dumb scenario. We need prompt text, as setText won't show on launch
+        P1CharDropDown.setPromptText("Select P1 Character");            //Extremely dumb scenario. We need prompt text, as setText won't show on launch. But prompt text disappears on noneditable comboboxes
         P1CharDropDown.setButtonCell(new ListCell<String>() {           //But every time selection is cleared, we'll lose the prompt text on noneditable comboboxes
             @Override
             public void updateItem(String item, boolean empty) {
@@ -226,9 +252,13 @@ public class ScorePane extends Pane {
 
         int buttonY = 145;
 
-        refreshButton = new Button("Refresh");
-        refreshButton.setPrefSize(138, 40);
-        refreshButton.relocate(10, buttonY);
+        swapButton = new Button("Swap");
+        swapButton.setPrefSize(60, 60);
+        swapButton.relocate(270, 10);
+
+        toggleChallongeButton = new Button("Hide Challonge");
+        toggleChallongeButton.setPrefSize(138, 40);
+        toggleChallongeButton.relocate(10, buttonY);
 
         saveButton = new Button("Save and Output");
         saveButton.setPrefSize(138, 40);
@@ -242,20 +272,20 @@ public class ScorePane extends Pane {
         resetButton.setPrefSize(138, 40);
         resetButton.relocate(452, buttonY);
 
-        swapButton = new Button("Swap");
-        swapButton.setPrefSize(60, 60);
-        swapButton.relocate(270, 10);
-
-        testButton = new Button("Test");
-        testButton.relocate(450, 225);
-        //getChildren().add(testButton);
-
-        getChildren().addAll(refreshButton, saveButton, uploadButton, resetButton, swapButton);
+        getChildren().addAll(toggleChallongeButton, saveButton, uploadButton, resetButton, swapButton);
     }
 
+    //called when selecting match from match dropdown
     public void updatePlayersFromMatch(Match selectedMatch){
         P1DropDown.setOnAction(null);      //Disable player drop down event listeners, we're changing values programmatically
         P2DropDown.setOnAction(null);
+
+        reset(false);
+
+        if(model.isReadyToPush()){
+            model.setReadyToPush(false);
+            update();
+        }
 
         if(selectedMatch != null){
             String player1Name = selectedMatch.getPlayer1Name();        //Take player names from selected match
@@ -285,6 +315,16 @@ public class ScorePane extends Pane {
         if(challongePane != view.getChallongePane()){
             challongePane = view.getChallongePane();
         }
+        uploadButton.setDisable(!model.isReadyToPush());
+    }
+
+    public void toggleChallonge(boolean toggle){
+        if(toggle){
+            toggleChallongeButton.setText("Hide Challonge");
+        }
+        else{
+            toggleChallongeButton.setText("Show Challonge");
+        }
     }
 
     //Swap info in fields for each player
@@ -307,13 +347,12 @@ public class ScorePane extends Pane {
         P2PortDropDown.getSelectionModel().select(tempPort);
     }
 
-    //todo
     public void save(){
-        model.saveInfo( P1DropDown.getValue(), P2DropDown.getValue(),
-                        P1ScoreSpinner.getValue(), P2ScoreSpinner.getValue(),
-                        P1PortDropDown.getValue(), P2PortDropDown.getValue(),
-                        P1CharDropDown.getSelectionModel().getSelectedItem(), P2CharDropDown.getSelectionModel().getSelectedItem(),
-                        tournamentRoundField.getText(), tournamentNameField.getText(), commentatorsField.getText(), challongePane.getMatchDropDown().getValue());
+        model.saveMatchInfo(P1DropDown.getValue(), P2DropDown.getValue(),
+                            P1ScoreSpinner.getValue(), P2ScoreSpinner.getValue(),
+                            P1PortDropDown.getValue(), P2PortDropDown.getValue(),
+                            P1CharDropDown.getSelectionModel().getSelectedItem(), P2CharDropDown.getSelectionModel().getSelectedItem(),
+                            tournamentRoundField.getText(), tournamentNameField.getText(), commentatorsField.getText(), challongePane.getMatchDropDown().getValue());
     }
 
     public void reset(boolean completeReset){
@@ -355,21 +394,30 @@ public class ScorePane extends Pane {
         ObservableList<String> participantOptions = FXCollections.observableArrayList(participantNames);
         P1DropDown.setItems(participantOptions);        //Populate player drop downs
         P2DropDown.setItems(participantOptions);
-    }
 
-    public Button getSaveButton(){
-        return saveButton;
-    }
-
-    public Button getResetButton(){
-        return resetButton;
+        if(model.isReadyToPush()){
+            model.setReadyToPush(false);
+            update();
+        }
     }
 
     public Button getSwapButton(){
         return swapButton;
     }
 
-    public Button getTestButton(){
-        return testButton;
+    public Button getToggleChallongeButton(){
+        return toggleChallongeButton;
+    }
+
+    public Button getSaveButton(){
+        return saveButton;
+    }
+
+    public Button getUploadButton(){
+        return uploadButton;
+    }
+
+    public Button getResetButton(){
+        return resetButton;
     }
 }

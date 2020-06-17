@@ -2,11 +2,14 @@ package challonge;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.awt.*;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
@@ -143,13 +146,25 @@ public class ChallongeAPI {
         return participantList;
     }
 
-    public static String putMatchResults(int tournamentID, int matchID, int player1Score, int player2Score, int winnerID){
+    //No issue if match already has results inputted. putMatchResults() simply overwrites values within that match
+    public static String putMatchResults(int tournamentID, int matchID, int player1Score, int player2Score, Integer winnerID){
         return put("https://api.challonge.com/v1/tournaments/" + tournamentID + "/matches/" + matchID + ".json","{\"match\": {\"scores_csv\": \"" + player1Score + "-" + player2Score + "\", \"winner_id\": " + winnerID + "}}", 30*1000);
     }
 
     public static void setCredentials(String username, String password){
         USERNAME = username;
         API_KEY = password;
+    }
+
+    //Opens url in browser
+    public static void openURL(String url){
+        try {
+            if(url != null){
+                Desktop.getDesktop().browse(new URL(url).toURI());
+            }
+        } catch (IOException | URISyntaxException e) {
+            e.printStackTrace();
+        }
     }
 }
 

@@ -6,6 +6,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListCell;
@@ -19,18 +20,18 @@ public class ChallongePane extends Pane {
 
     private ComboBox<Tournament> tournamentDropDown;
     private ComboBox<Match> matchDropDown;
-    private Button loadTournamentButton, loginButton;
+    private Button loadTournamentButton, loginButton, refreshButton, urlTournamentButton, urlAPIButton;
     private PasswordField API_keyField;
     private EventHandler<ActionEvent> matchDropDownEventHandler;
 
     public ChallongePane(ScoreboardModel initModel, ScoreboardView initView){
         this.model = initModel;
         this.view = initView;
-        this.setPrefSize(600, 100);
+        this.setPrefSize(600, 95);
         this.setStyle("-fx-border-color: black");
 
         int row1Y = 15;
-        int row2Y = 55;
+        int row2Y = 50;
 
         tournamentDropDown = new ComboBox<Tournament>();
         tournamentDropDown.setPromptText("Select Tournament");
@@ -48,7 +49,7 @@ public class ChallongePane extends Pane {
                 }
             }
         });
-        tournamentDropDown.setPrefSize(250,25);
+        tournamentDropDown.setPrefSize(155,25);
         tournamentDropDown.relocate(215, row1Y);
 
         matchDropDown = new ComboBox<Match>();
@@ -99,9 +100,23 @@ public class ChallongePane extends Pane {
         loadTournamentButton.setPrefSize(115,25);
         loadTournamentButton.relocate(475, row1Y);
 
+        urlTournamentButton = new Button("URL");
+        urlTournamentButton.setPrefSize(50,25);
+        urlTournamentButton.relocate(380, row1Y);
+
+        refreshButton = new Button("↻");
+        refreshButton.setPadding(new Insets(0, 0, 0, 0));
+        refreshButton.setStyle("-fx-font: 20px \"Verdana\";");
+        refreshButton.setPrefSize(25,25);
+        refreshButton.relocate(440, row1Y);
+
         loginButton = new Button("Login to Challonge");
-        loginButton.setPrefSize(195,25);
+        loginButton.setPrefSize(145,25);
         loginButton.relocate(10, row2Y);
+
+        urlAPIButton = new Button("API?");
+        urlAPIButton.setPrefSize(40,25);
+        urlAPIButton.relocate(165, row2Y);
 
         API_keyField = new PasswordField();
         API_keyField.setPromptText("Challonge API Key");
@@ -115,9 +130,10 @@ public class ChallongePane extends Pane {
         API_keyField.setPrefSize(195,25);
         API_keyField.relocate(10, row1Y);
 
-        getChildren().addAll(tournamentDropDown, matchDropDown, loadTournamentButton, loginButton, API_keyField);
+        getChildren().addAll(tournamentDropDown, matchDropDown, loadTournamentButton, urlTournamentButton, refreshButton, loginButton, urlAPIButton, API_keyField);
     }
 
+    //called when p1/p2 dropdown selected
     public void updateMatchFromPlayers(ComboBox<String> thisPlayerComboBox, ComboBox<String> otherPlayerComboBox){
         matchDropDown.setOnAction(null);        //Disable event listener for the match drop down (so it doesn't listen to this programmatic change)
 
@@ -166,6 +182,13 @@ public class ChallongePane extends Pane {
         tournamentDropDown.setDisable(!model.isChallongeLoggedIn());        //disable if not logged in to challonge
         loadTournamentButton.setDisable(!model.isChallongeLoggedIn());
         matchDropDown.setDisable(!model.isChallongeLoggedIn());
+
+        urlTournamentButton.setDisable(model.getCurrentTournament() == null);       //disable if no tournament loaded
+        refreshButton.setDisable(model.getCurrentTournament() == null);
+    }
+
+    public void toggleChallonge(boolean toggle){
+        setVisible(toggle);
     }
 
     public void reset(boolean completeReset){
@@ -190,6 +213,10 @@ public class ChallongePane extends Pane {
         matchDropDown.setItems(matchOptions);       //Populate match drop down
     }
 
+    public void refresh(Tournament currentTournament){
+        tournamentDropDown.getSelectionModel().select(currentTournament);
+    }
+
     public ComboBox<Tournament> getTournamentDropDown() {
         return tournamentDropDown;
     }
@@ -204,5 +231,17 @@ public class ChallongePane extends Pane {
 
     public Button getLoginButton(){
         return loginButton;
+    }
+
+    public Button getRefreshButton(){
+        return refreshButton;
+    }
+
+    public Button getUrlTournamentButton() {
+        return urlTournamentButton;
+    }
+
+    public Button getUrlAPIButton() {
+        return urlAPIButton;
     }
 }
