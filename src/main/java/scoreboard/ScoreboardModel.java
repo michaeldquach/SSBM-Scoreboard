@@ -5,22 +5,20 @@ import challonge.Match;
 import challonge.Participant;
 import challonge.Tournament;
 import java.util.ArrayList;
-import java.util.Collections;
 
 public class ScoreboardModel {
     private ArrayList<Tournament> tournaments;
     private ArrayList<Participant> participants;
     private ArrayList<Match> matches;
 
-    private String P1Name, P2Name, P1Char, P2Char, roundString, tournamentName, commentatorName;
+    private String P1Name, P2Name, roundString, tournamentName, commentatorName;
     private int P1Score, P2Score, P1Port, P2Port;
     private boolean toggleChallonge, challongeLoggedIn, readyToPush;
+    private Character P1Char, P2Char;
 
     private Participant player1, player2;
     private Tournament currentTournament;
     private Match currentMatch;
-
-    private final ArrayList<String> characters;
 
     public ScoreboardModel(){
         //Fields for OBS
@@ -52,11 +50,6 @@ public class ScoreboardModel {
         tournaments = new ArrayList<Tournament>();
         participants = new ArrayList<Participant>();
         matches = new ArrayList<Match>();
-
-        characters = new ArrayList<String>();
-        Collections.addAll(characters, "Bowser", "Captain Falcon", "Donkey Kong", "Dr. Mario", "Falco", "Fox", "Ganondorf", "Ice Climbers",
-                "Jigglypuff", "Kirby", "Link", "Luigi", "Mario", "Marth", "Mewtwo", "Mr. Game & Watch", "Ness", "Peach",
-                "Pichu", "Pikachu", "Roy", "Samus", "Sheik", "Yoshi", "Young Link", "Zelda");
     }
 
     //Generates list of tournaments from JSON. Also checks if logged in to Challonge
@@ -192,7 +185,7 @@ public class ScoreboardModel {
         return false;
     }
     
-    public void saveMatchInfo(String P1Name, String P2Name, int P1Score, int P2Score, int P1Port, int P2Port, String P1Char, String P2Char, String roundString, String tournamentName, String commentatorName, Match currentMatch){
+    public void saveMatchInfo(String P1Name, String P2Name, int P1Score, int P2Score, int P1Port, int P2Port, Character P1Char, Character P2Char, String roundString, String tournamentName, String commentatorName, Match currentMatch){
         this.P1Name = P1Name;
         this.P2Name = P2Name;
         this.P1Score = P1Score;
@@ -305,10 +298,6 @@ public class ScoreboardModel {
 
     public Tournament getCurrentTournament(){
         return currentTournament;
-    }
-
-    public ArrayList<String> getCharacters(){
-        return characters;
     }
 
     public void toggleChallonge(){

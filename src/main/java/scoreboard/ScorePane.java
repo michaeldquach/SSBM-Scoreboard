@@ -9,6 +9,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.NodeOrientation;
 import javafx.scene.control.*;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import java.util.ArrayList;
 
@@ -18,8 +19,9 @@ public class ScorePane extends Pane {
     private ChallongePane challongePane;
 
     private Spinner<Integer> P1ScoreSpinner, P2ScoreSpinner;
-    private ComboBox<String> P1DropDown, P2DropDown, P1CharDropDown, P2CharDropDown;
+    private ComboBox<String> P1DropDown, P2DropDown;
     private ComboBox<Integer> P1PortDropDown, P2PortDropDown;
+    private ComboBox<Character> P1CharDropDown, P2CharDropDown;
     private TextField tournamentRoundField, tournamentNameField, commentatorsField;
     private Button swapButton, toggleChallongeButton, saveButton, uploadButton, resetButton;
     private EventHandler<ActionEvent> P1DropDownEventHandler, P2DropDownEventHandler;
@@ -128,18 +130,19 @@ public class ScorePane extends Pane {
 
         int row2Y = 45;
 
-        ObservableList<String> characterList = FXCollections.observableArrayList(model.getCharacters());
+        ObservableList<Character> characterList = FXCollections.observableArrayList(Character.getCharacters());
 
-        P1CharDropDown = new ComboBox<String>();
-        P1CharDropDown.setItems(characterList);
+        P1CharDropDown = new ComboBox<Character>();
+        P1CharDropDown.setItems(characterList); //todo
         P1CharDropDown.setPromptText("Select P1 Character");            //Extremely dumb scenario. We need prompt text, as setText won't show on launch. But prompt text disappears on noneditable comboboxes
-        P1CharDropDown.setButtonCell(new ListCell<String>() {           //But every time selection is cleared, we'll lose the prompt text on noneditable comboboxes
+        P1CharDropDown.setButtonCell(new ListCell<Character>() {           //But every time selection is cleared, we'll lose the prompt text on noneditable comboboxes
             @Override
-            public void updateItem(String item, boolean empty) {
+            public void updateItem(Character item, boolean empty) {
                 super.updateItem(item, empty);
                 if(item != null) {
-                    setText(item);
+                    setText(item.toString() + " ");
                     setStyle("");
+                    setGraphic(new ImageView(item.getIcon()));
                 }
                 else{
                     setText("Select P1 Character");                     //Thus need to set "prompt text" again
@@ -147,24 +150,43 @@ public class ScorePane extends Pane {
                 }
             }
         });
+        P1CharDropDown.setCellFactory(lv -> new ListCell<Character>(){
+            public void updateItem(Character item, boolean empty){
+                super.updateItem(item, empty);
+                if(item != null){
+                    setText(item.toString() + " ");
+                    setGraphic(new ImageView(item.getIcon()));
+                }
+            }
+        });
         P1CharDropDown.setNodeOrientation(NodeOrientation.RIGHT_TO_LEFT);
         P1CharDropDown.setPrefSize(175,25);
         P1CharDropDown.relocate(85, row2Y);
 
-        P2CharDropDown = new ComboBox<String>();
+        P2CharDropDown = new ComboBox<Character>();
         P2CharDropDown.setItems(characterList);
         P2CharDropDown.setPromptText("Select P2 Character");
-        P2CharDropDown.setButtonCell(new ListCell<String>() {
+        P2CharDropDown.setButtonCell(new ListCell<Character>() {
             @Override
-            public void updateItem(String item, boolean empty) {
+            public void updateItem(Character item, boolean empty) {
                 super.updateItem(item, empty);
                 if(item != null) {
-                    setText(item);
+                    setText(" " + item.toString());
                     setStyle("");
+                    setGraphic(new ImageView(item.getIcon()));
                 }
                 else{
                     setText("Select P2 Character");
                     setStyle("-fx-font-style: italic;" + "-fx-text-fill: grey;");
+                }
+            }
+        });
+        P2CharDropDown.setCellFactory(lv -> new ListCell<Character>(){
+            public void updateItem(Character item, boolean empty){
+                super.updateItem(item, empty);
+                if(item != null){
+                    setText(" " + item.toString());
+                    setGraphic(new ImageView(item.getIcon()));
                 }
             }
         });
@@ -327,7 +349,7 @@ public class ScorePane extends Pane {
 
         String tempName = P1DropDown.getValue();
         int tempScore = P1ScoreSpinner.getValue();
-        String tempChar = P1CharDropDown.getValue();
+        Character tempChar = P1CharDropDown.getValue();
         Integer tempPort = P1PortDropDown.getValue();       //keep this Integer instead of int, so it doesn't accidentally pass an int arg as an index
 
         P1DropDown.getSelectionModel().select(P2DropDown.getValue());
