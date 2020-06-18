@@ -1,5 +1,6 @@
 package scoreboard;
 
+import challonge.ChallongeAPI;
 import challonge.Match;
 import challonge.Tournament;
 import javafx.collections.FXCollections;
@@ -11,6 +12,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.PasswordField;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
 
 public class ChallongePane extends Pane {
@@ -120,10 +122,10 @@ public class ChallongePane extends Pane {
 
         API_keyField = new PasswordField();
         API_keyField.setPromptText("Challonge API Key");
-        API_keyField.setText("0jjHgAoqDH85DjAdKnWdRIRCecr5CktpePisHH7d");           //TODO DEBUG
-        API_keyField.setOnAction(new EventHandler<ActionEvent>() {
+        API_keyField.setText(ChallongeAPI.readAPIKey());
+        API_keyField.setOnKeyTyped(new EventHandler<KeyEvent>() {
             @Override
-            public void handle(ActionEvent actionEvent) {
+            public void handle(KeyEvent keyEvent) {
                 update();
             }
         });

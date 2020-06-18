@@ -13,6 +13,7 @@ public class ScoreboardApp extends Application {
     private ScoreboardView view;
 
     public void start(Stage primaryStage){
+        ChallongeAPI.initKeyring();
         model = ScoreboardModel.loadModel();
         view = new ScoreboardView(model);
 
@@ -21,7 +22,7 @@ public class ScoreboardApp extends Application {
 
         //View handling code
 
-            //Buttons
+            //ScorePane Buttons
         scorePane.getSwapButton().setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
@@ -58,6 +59,7 @@ public class ScoreboardApp extends Application {
             }
         });
 
+            //ChallongePane Buttons
         challongePane.getLoginButton().setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {

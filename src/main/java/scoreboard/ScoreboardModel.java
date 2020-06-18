@@ -5,6 +5,7 @@ import challonge.Match;
 import challonge.Participant;
 import challonge.Tournament;
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class ScoreboardModel {
     private ArrayList<Tournament> tournaments;
@@ -18,6 +19,8 @@ public class ScoreboardModel {
     private Participant player1, player2;
     private Tournament currentTournament;
     private Match currentMatch;
+
+    private final ArrayList<String> characters;
 
     public ScoreboardModel(){
         //Fields for OBS
@@ -49,11 +52,20 @@ public class ScoreboardModel {
         tournaments = new ArrayList<Tournament>();
         participants = new ArrayList<Participant>();
         matches = new ArrayList<Match>();
+
+        characters = new ArrayList<String>();
+        Collections.addAll(characters, "Bowser", "Captain Falcon", "Donkey Kong", "Dr. Mario", "Falco", "Fox", "Ganondorf", "Ice Climbers",
+                "Jigglypuff", "Kirby", "Link", "Luigi", "Mario", "Marth", "Mewtwo", "Mr. Game & Watch", "Ness", "Peach",
+                "Pichu", "Pikachu", "Roy", "Samus", "Sheik", "Yoshi", "Young Link", "Zelda");
     }
 
-    //generates list of tournaments from JSON
-    public void pullTournamentList(){
-        tournaments = ChallongeAPI.getTournamentList();
+    //Generates list of tournaments from JSON. Also checks if logged in to Challonge
+    public boolean pullTournamentList(){
+        if(ChallongeAPI.getTournamentList() != null){               //Only retrieves null if failed to login. Will retrieve an array of tournaments if logged in
+            tournaments = ChallongeAPI.getTournamentList();         //Note: accounts with no tournaments will still retrieve an empty array of tournaments, so that case is covered
+            return true;
+        }
+        return false;           //Canary to flag that we've not been able to log in
     }
 
     public boolean pullMatchList(){
@@ -67,7 +79,7 @@ public class ScoreboardModel {
                 }
             }
             currentTournament.setMaxRound(maxRound);        //find highest round number, update in tournament
-            return true;
+            return true;                                    //updating match and tournament is kinda dumb, but info is not included in their respective JSONs, and is essentially the same as creating a new array
         }
         return false;
     }
@@ -208,8 +220,8 @@ public class ScoreboardModel {
             this.player1 = null;
             this.player2 = null;
         }
-
-        readyToPush = this.currentTournament != null && this.currentMatch != null && this.player1 != null && this.player2 != null;      //check if all fields are present, flags ready for pushing
+        //check if all fields are present, flags ready for pushing. Only instance where readyToPush can be set to true
+        readyToPush = this.currentTournament != null && this.currentMatch != null && this.player1 != null && this.player2 != null;
     }
 
     public void reset(boolean completeReset){
@@ -244,11 +256,8 @@ public class ScoreboardModel {
 
     //logs into challonge and pulls tournament list
     public void challongeLogin(String username, String password){
-        ChallongeAPI.setCredentials(username, password);         //Set credentials from api field
-
-        //todo if successful login, save API_KEY to config file
-        pullTournamentList();         //populate list of tournaments
-        challongeLoggedIn = true;
+        ChallongeAPI.saveAPIKey(username, password);        //saves api key to keyring
+        challongeLoggedIn = pullTournamentList();        //Populates the tournament list. If we pulled the tournamentList successfully, then it means we've logged in
         readyToPush = false;
     }
 
@@ -263,12 +272,8 @@ public class ScoreboardModel {
     }
 
     //Method for initializing model from a config file
-    //todo make it read from a config file
     public static ScoreboardModel loadModel(){
         ScoreboardModel model = new ScoreboardModel();
-        //ChallongeAPI.setCredentials("Sasquach_", "0jjHgAoqDH85DjAdKnWdRIRCecr5CktpePisHH7d");     //old
-        //model.pullTournamentList();
-
         return model;
     }
 
@@ -300,6 +305,10 @@ public class ScoreboardModel {
 
     public Tournament getCurrentTournament(){
         return currentTournament;
+    }
+
+    public ArrayList<String> getCharacters(){
+        return characters;
     }
 
     public void toggleChallonge(){

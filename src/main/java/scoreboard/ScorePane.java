@@ -128,13 +128,7 @@ public class ScorePane extends Pane {
 
         int row2Y = 45;
 
-        //todo make this pull the array from elsewhere
-        ArrayList<String> charactersSSBM = new ArrayList<String>();
-        charactersSSBM.add("Fox");
-        charactersSSBM.add("Falco");
-        charactersSSBM.add("Captain Falcon");
-        charactersSSBM.add("Mr. Game & Watch");
-        ObservableList<String> characterList = FXCollections.observableArrayList(charactersSSBM);
+        ObservableList<String> characterList = FXCollections.observableArrayList(model.getCharacters());
 
         P1CharDropDown = new ComboBox<String>();
         P1CharDropDown.setItems(characterList);
@@ -315,7 +309,7 @@ public class ScorePane extends Pane {
         if(challongePane != view.getChallongePane()){
             challongePane = view.getChallongePane();
         }
-        uploadButton.setDisable(!model.isReadyToPush());
+        uploadButton.setDisable(!model.isReadyToPush() || !model.isToggleChallonge());
     }
 
     public void toggleChallonge(boolean toggle){
@@ -384,7 +378,9 @@ public class ScorePane extends Pane {
 
     //Updates namefield and player dropdowns from loaded tournament
     public void loadTournament(Tournament loadedTournament){
-        tournamentNameField.setText(loadedTournament.getName());        //update field for tournament name
+        if(loadedTournament != null){
+            tournamentNameField.setText(loadedTournament.getName());        //update field for tournament name
+        }
 
         ArrayList<String> participantNames = new ArrayList<String>();       //Make array list of player strings rather than players
         for(Participant x:model.getParticipants()){
@@ -395,9 +391,9 @@ public class ScorePane extends Pane {
         P1DropDown.setItems(participantOptions);        //Populate player drop downs
         P2DropDown.setItems(participantOptions);
 
-        if(model.isReadyToPush()){
+        if(model.isReadyToPush()){          //only called if the model bool is already true
             model.setReadyToPush(false);
-            update();
+            update();           //only needs to update this pane
         }
     }
 

@@ -45,6 +45,7 @@ public class ScoreboardView extends Pane {
 
         scorePane.toggleChallonge(toggle);
         challongePane.toggleChallonge(toggle);
+        update();
     }
 
     public void save(){

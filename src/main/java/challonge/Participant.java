@@ -31,10 +31,6 @@ public class Participant {
         return id;
     }
 
-    public String toStringOLD(){
-        return "Participant: " + name + " (" + id + "). Seed: " + seed;
-    }
-
     public String toString(){
         return name;
     }

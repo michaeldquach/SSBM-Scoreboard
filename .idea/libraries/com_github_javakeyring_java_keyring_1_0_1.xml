@@ -1,0 +1,17 @@
+<component name="libraryTable">
+  <library name="com.github.javakeyring:java-keyring:1.0.1" type="repository">
+    <properties maven-id="com.github.javakeyring:java-keyring:1.0.1" />
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/github/javakeyring/java-keyring/1.0.1/java-keyring-1.0.1.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/de/swiesend/secret-service/1.0.0-RC.3/secret-service-1.0.0-RC.3.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/com/github/hypfvieh/dbus-java/3.0.2/dbus-java-3.0.2.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/com/github/hypfvieh/java-utils/1.0.5/java-utils-1.0.5.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/at/favre/lib/hkdf/1.0.2/hkdf-1.0.2.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/net/java/dev/jna/jna/5.5.0/jna-5.5.0.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/net/java/dev/jna/jna-platform/5.5.0/jna-platform-5.5.0.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/slf4j/slf4j-api/1.7.29/slf4j-api-1.7.29.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
