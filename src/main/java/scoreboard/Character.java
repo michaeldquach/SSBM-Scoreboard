@@ -6,7 +6,7 @@ import java.util.ArrayList;
 public class Character {
     private final int index;
     private final String name;
-    private Image icon;
+    private final Image icon;
 
     public Character(int index, String name, Image icon){
         this.index = index;
@@ -23,7 +23,7 @@ public class Character {
 
         for(int i = 0; i < characterNames.length; i++){
             try{
-                characters.add(new Character(i, characterNames[i], new Image(String.format("Stock Icons/%02d %s.png", i, characterNames[i]))));
+                characters.add(new Character(i, characterNames[i], new Image(String.format("Stock Icons/GUI/%02d %s.png", i, characterNames[i]))));
             }
             catch (Exception e) {
                 System.out.println("Error finding icon for: " + characterNames[i]);
@@ -45,15 +45,11 @@ public class Character {
         return icon;
     }
 
-    public String getIconPath(){
-        return String.format("Stock Icons/%02d %s.png", index, name);
+    public String getIconPath(String location){
+        return String.format("/Stock Icons/%s/%02d %s.png", location, index, name);
     }
 
     public String toString(){
         return name;
-    }
-
-    public static void main(String[] args){
-        getCharacters();
     }
 }

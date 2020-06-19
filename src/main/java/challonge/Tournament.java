@@ -4,11 +4,11 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)     //JSON has more fields than we care about
 public class Tournament {
-    private String name;
-    private int id;
-    private int participants_count;
+    private final String name;
+    private final int id;
+    private final int participants_count;
     private int maxRound;
-    private String full_challonge_url;
+    private final String full_challonge_url;
 
     public Tournament(){
         name = "";

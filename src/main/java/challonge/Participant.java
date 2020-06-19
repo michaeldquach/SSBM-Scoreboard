@@ -3,9 +3,9 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)     //JSON string has more fields than we care about
 public class Participant {
-    private String name;
-    private int seed;
-    private int id;
+    private final String name;
+    private final int seed;
+    private final int id;
 
     public Participant(){
         name = "";

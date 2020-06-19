@@ -133,7 +133,7 @@ public class ScorePane extends Pane {
         ObservableList<Character> characterList = FXCollections.observableArrayList(Character.getCharacters());
 
         P1CharDropDown = new ComboBox<Character>();
-        P1CharDropDown.setItems(characterList); //todo
+        P1CharDropDown.setItems(characterList);
         P1CharDropDown.setPromptText("Select P1 Character");            //Extremely dumb scenario. We need prompt text, as setText won't show on launch. But prompt text disappears on noneditable comboboxes
         P1CharDropDown.setButtonCell(new ListCell<Character>() {           //But every time selection is cleared, we'll lose the prompt text on noneditable comboboxes
             @Override

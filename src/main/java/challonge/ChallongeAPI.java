@@ -19,7 +19,7 @@ import java.util.ArrayList;
 
 public class ChallongeAPI {
     private static Keyring keyring;
-    private static ObjectMapper mapper = new ObjectMapper();
+    private static final ObjectMapper mapper = new ObjectMapper();
 
     public static String send(String requestURL, String method, String payload, int timeout){
         try{

@@ -7,6 +7,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import obs.OBSOutput;
 
 public class ScoreboardApp extends Application {
     private ScoreboardModel model;
@@ -14,6 +15,8 @@ public class ScoreboardApp extends Application {
 
     public void start(Stage primaryStage){
         ChallongeAPI.initKeyring();
+        OBSOutput.initialize();
+
         model = ScoreboardModel.loadModel();
         view = new ScoreboardView(model);
 

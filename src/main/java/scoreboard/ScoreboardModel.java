@@ -4,6 +4,8 @@ import challonge.ChallongeAPI;
 import challonge.Match;
 import challonge.Participant;
 import challonge.Tournament;
+import obs.OBSOutput;
+
 import java.util.ArrayList;
 
 public class ScoreboardModel {
@@ -21,7 +23,7 @@ public class ScoreboardModel {
     private Match currentMatch;
 
     public ScoreboardModel(){
-        //Fields for OBS
+        //Fields for OBSOutput
         P1Name = null;
         P2Name = null;
 
@@ -50,6 +52,9 @@ public class ScoreboardModel {
         tournaments = new ArrayList<Tournament>();
         participants = new ArrayList<Participant>();
         matches = new ArrayList<Match>();
+
+        //OBSOutput.createOutputText("testing 2", "hi");
+        OBSOutput.initialize();
     }
 
     //Generates list of tournaments from JSON. Also checks if logged in to Challonge
@@ -94,39 +99,73 @@ public class ScoreboardModel {
         return null;
     }
 
-    public void DEBUGTESTING(){
-        if(readyToPush){
-            System.out.println("Fields required for challonge ready to push.");     //debug
+    public void DEBUGTESTING(boolean DEBUG){
+        if(DEBUG){
+            if(readyToPush){
+                System.out.println("Fields required for challonge ready to push.");     //debug
+            }
+
+            //OUTPUT to OBSOutput
+            //Players
+            System.out.println("P1: " + this.P1Name);
+            System.out.println("P2: " + this.P2Name);
+
+            //Scores
+            System.out.println("P1 Score: " + this.P1Score);
+            System.out.println("P2 Score: " + this.P2Score);
+
+            //Ports
+            System.out.println("P1 Port: " + this.P1Port);
+            System.out.println("P2 Port: " + this.P2Port);
+
+            //Characters
+            System.out.println("P1 Char: " + this.P1Char);
+            System.out.println("P2 Char: " + this.P2Char);
+
+            //Match Info
+            System.out.println("Bracket Round: " + this.roundString);
+            System.out.println("Tournament: " + this.tournamentName);
+            System.out.println("Commentators: " + this.commentatorName);
+
+            //Challonge Info
+            System.out.println("Current Tournament: " + this.currentTournament);
+            System.out.println("Current Match: " + this.currentMatch);
+            System.out.println("Player 1: " + this.player1);
+            System.out.println("Player 2: " + this.player2);
+            System.out.println();
+        }
+    }
+
+    public void outputToOBS(){
+        OBSOutput.writeOutputText("P1 Tag", P1Name);
+        OBSOutput.writeOutputText("P2 Tag", P2Name);
+
+        OBSOutput.writeOutputText("P1 Score", String.valueOf(P1Score));
+        OBSOutput.writeOutputText("P2 Score", String.valueOf(P2Score));
+
+        OBSOutput.writeOutputText("P1 Port", String.valueOf(P1Port));
+        OBSOutput.writeOutputText("P2 Port", String.valueOf(P2Port));
+
+        if(P1Char != null){
+            OBSOutput.writeOutputText("P1 Char", P1Char.getName());
+            OBSOutput.writeOutputImage(P1Char.getIconPath("OBS"), "P1 Character Icon");
+        }
+        else{
+            OBSOutput.writeOutputText("P1 Char", null);
+            OBSOutput.writeOutputImage(null, "P1 Character Icon");
+        }
+        if(P2Char != null){
+            OBSOutput.writeOutputText("P2 Char", P2Char.getName());
+            OBSOutput.writeOutputImage(P2Char.getIconPath("OBS"), "P2 Character Icon");
+        }
+        else{
+            OBSOutput.writeOutputText("P2 Char", null);
+            OBSOutput.writeOutputImage(null, "P2 Character Icon");
         }
 
-        //OUTPUT to OBS
-        //Players
-        System.out.println("P1: " + this.P1Name);
-        System.out.println("P2: " + this.P2Name);
-
-        //Scores
-        System.out.println("P1 Score: " + this.P1Score);
-        System.out.println("P2 Score: " + this.P2Score);
-
-        //Ports
-        System.out.println("P1 Port: " + this.P1Port);
-        System.out.println("P2 Port: " + this.P2Port);
-
-        //Characters
-        System.out.println("P1 Char: " + this.P1Char);
-        System.out.println("P2 Char: " + this.P2Char);
-
-        //Match Info
-        System.out.println("Bracket Round: " + this.roundString);
-        System.out.println("Tournament: " + this.tournamentName);
-        System.out.println("Commentators: " + this.commentatorName);
-
-        //Challonge Info
-        System.out.println("Current Tournament: " + this.currentTournament);
-        System.out.println("Current Match: " + this.currentMatch);
-        System.out.println("Player 1: " + this.player1);
-        System.out.println("Player 2: " + this.player2);
-        System.out.println();
+        OBSOutput.writeOutputText("Bracket Round", roundString);
+        OBSOutput.writeOutputText("Tournament Name", tournamentName);
+        OBSOutput.writeOutputText("Commentator Tag", commentatorName);
     }
 
     //todo make real error messages, confirmation before pushing
@@ -202,7 +241,7 @@ public class ScoreboardModel {
         if(currentMatch != null){
             if(currentMatch.getPlayer1Name().equals(P1Name) && currentMatch.getPlayer2Name().equals(P2Name)){       //player1 and player2 are only used to push data to challonge, and aren't accessed otherwise
                 this.player1 = currentMatch.getPlayer1();                                                           //so we only need to save p1 and p2 when it exactly matches the match data (ready for pushing)
-                this.player2 = currentMatch.getPlayer2();                                                           //p1name and p2name are still saved for output to OBS
+                this.player2 = currentMatch.getPlayer2();                                                           //p1name and p2name are still saved for output to OBSOutput
             }
             else if(currentMatch.getPlayer1Name().equals(P2Name) && currentMatch.getPlayer2Name().equals(P1Name)){      //check that order of player names matches order of Participant Players
                 this.player2 = currentMatch.getPlayer1();                                                               //so we don't accidentally attribute the scores backwards (e.g. after player swaps in GUI)
@@ -215,6 +254,9 @@ public class ScoreboardModel {
         }
         //check if all fields are present, flags ready for pushing. Only instance where readyToPush can be set to true
         readyToPush = this.currentTournament != null && this.currentMatch != null && this.player1 != null && this.player2 != null;
+
+        DEBUGTESTING(false);
+        outputToOBS();      //write to text files for OBS
     }
 
     public void reset(boolean completeReset){
