@@ -144,7 +144,9 @@ public class ScoreboardModel {
         OBSOutput.writeOutputText("P2 Score", String.valueOf(P2Score));
 
         OBSOutput.writeOutputText("P1 Port", String.valueOf(P1Port));
+        OBSOutput.writeOutputImage(String.format("/Images/OBS/Port %d.png", P1Port), "P1 Port Image");
         OBSOutput.writeOutputText("P2 Port", String.valueOf(P2Port));
+        OBSOutput.writeOutputImage(String.format("/Images/OBS/Port %d.png", P2Port), "P2 Port Image");
 
         if(P1Char != null){
             OBSOutput.writeOutputText("P1 Char", P1Char.getName());

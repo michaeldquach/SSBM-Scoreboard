@@ -128,7 +128,7 @@ public class ScoreboardApp extends Application {
     }
 
     public void handleUpload(){
-        if(model.uploadMatchInfo(false, false)){
+        if(model.uploadMatchInfo(false, true)){
             handleRefresh();        //updates tournament matches after pushing data
         }
     }

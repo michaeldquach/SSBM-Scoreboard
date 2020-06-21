@@ -183,8 +183,13 @@ public class ChallongeAPI {
     public static void initKeyring(){
         try{
             keyring = Keyring.create();
+            try{
+                keyring.getPassword("API", "Challonge");    //for first launch, keyring won't have a key stored, so we'll put one in
+            } catch (PasswordAccessException e) {
+                keyring.setPassword("API", "Challonge", "");
+            }
         }
-        catch (BackendNotSupportedException e) {
+        catch (BackendNotSupportedException | PasswordAccessException e) {
             e.printStackTrace();
         }
     }

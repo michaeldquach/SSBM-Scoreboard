@@ -23,7 +23,7 @@ public class Character {
 
         for(int i = 0; i < characterNames.length; i++){
             try{
-                characters.add(new Character(i, characterNames[i], new Image(String.format("Stock Icons/GUI/%02d %s.png", i, characterNames[i]))));
+                characters.add(new Character(i, characterNames[i], new Image(String.format("Images/GUI/%02d %s.png", i, characterNames[i]))));
             }
             catch (Exception e) {
                 System.out.println("Error finding icon for: " + characterNames[i]);
@@ -46,7 +46,7 @@ public class Character {
     }
 
     public String getIconPath(String location){
-        return String.format("/Stock Icons/%s/%02d %s.png", location, index, name);
+        return String.format("/Images/%s/%02d %s.png", location, index, name);
     }
 
     public String toString(){

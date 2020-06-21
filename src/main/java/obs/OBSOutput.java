@@ -58,7 +58,7 @@ public class OBSOutput {
                 source = OBSOutput.class.getResourceAsStream(fileNameSource);
             }
             else{
-                source = OBSOutput.class.getResourceAsStream("/Stock Icons/OBS/empty.png");
+                source = OBSOutput.class.getResourceAsStream("/Images/OBS/empty.png");
             }
 
             Path target = Paths.get(String.format("OBS Output/%s.png", fileNameOutput));

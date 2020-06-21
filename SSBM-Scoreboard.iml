@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module org.jetbrains.idea.maven.project.MavenProjectsManager.isMavenModule="true" type="JAVA_MODULE" version="4">
-  <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_13">
+  <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_8">
     <output url="file://$MODULE_DIR$/target/classes" />
     <output-test url="file://$MODULE_DIR$/target/test-classes" />
     <content url="file://$MODULE_DIR$">
@@ -11,8 +11,6 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="lib" level="project" />
-    <orderEntry type="library" name="com.github.javakeyring:java-keyring:1.0.1" level="project" />
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-databind:2.11.0" level="project" />
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-annotations:2.11.0" level="project" />
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-core:2.11.0" level="project" />
@@ -20,7 +18,14 @@
     <orderEntry type="library" name="Maven: com.google.guava:guava:20.0" level="project" />
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.datatype:jackson-datatype-joda:2.11.0" level="project" />
     <orderEntry type="library" name="Maven: joda-time:joda-time:2.9.9" level="project" />
+    <orderEntry type="library" name="Maven: com.github.javakeyring:java-keyring:1.0.1" level="project" />
+    <orderEntry type="library" name="Maven: de.swiesend:secret-service:1.0.0-RC.3" level="project" />
+    <orderEntry type="library" name="Maven: com.github.hypfvieh:dbus-java:3.0.2" level="project" />
+    <orderEntry type="library" name="Maven: com.github.hypfvieh:java-utils:1.0.5" level="project" />
+    <orderEntry type="library" name="Maven: at.favre.lib:hkdf:1.0.2" level="project" />
+    <orderEntry type="library" name="Maven: net.java.dev.jna:jna:5.5.0" level="project" />
+    <orderEntry type="library" name="Maven: net.java.dev.jna:jna-platform:5.5.0" level="project" />
+    <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.7.29" level="project" />
     <orderEntry type="library" name="Maven: org.slf4j:slf4j-nop:1.7.5" level="project" />
-    <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.7.5" level="project" />
   </component>
 </module>
