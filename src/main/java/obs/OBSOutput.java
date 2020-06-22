@@ -11,15 +11,24 @@ import java.nio.file.StandardCopyOption;
 
 public class OBSOutput {
     private static final String[] fileNames = {"P1 Tag", "P2 Tag", "P1 Score", "P2 Score", "P1 Port", "P2 Port", "P1 Char", "P2 Char", "Bracket Round", "Tournament Name", "Commentator Tag"};
+    private static final String[] imageFileNames = {"P1 Character Icon", "P1 Port Image", "P2 Character Icon", "P2 Port Image"};
 
-    //todo make it check if these files exist before overwriting
     //also initialize image files
     public static boolean initialize(){
         try{
             for(String fileName:fileNames){
                 File temp = new File(String.format("OBS Output/%s.txt", fileName));
-                temp.getParentFile().mkdirs();
-                temp.createNewFile();
+                if(!temp.exists()){
+                    temp.getParentFile().mkdirs();
+                    temp.createNewFile();
+                }
+            }
+            for(String fileName:imageFileNames){
+                File temp = new File(String.format("OBS Output/%s.png", fileName));
+                if(!temp.exists()){
+                    temp.getParentFile().mkdirs();
+                    temp.createNewFile();
+                }
             }
             return true;
         }

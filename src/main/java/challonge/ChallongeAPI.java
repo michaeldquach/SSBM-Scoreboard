@@ -133,7 +133,23 @@ public class ChallongeAPI {
 
     //More friendly API interfacing methods
 
-    //Challonge doesn't offer any ways to "login/validate" an API key other than getting/pushing/putting and not seeing an error, so this will double as API login verification
+    //Challonge doesn't offer any ways to "login/validate" an API key other than getting/pushing/putting and not seeing an error, so this will serve as API login verification
+    public static boolean login(String password){
+        int responseCode = 0;
+        int timeout = 30*1000;
+        try{
+            URL website = new URL("https://api.challonge.com/v1/tournaments.json?api_key=" + password);
+            HttpURLConnection connection = (HttpURLConnection) website.openConnection();
+            connection.setConnectTimeout(timeout);
+            responseCode = connection.getResponseCode();
+
+            return responseCode == 200;     //200 is response code for successful log in
+        }
+        catch (IOException e) {
+            return false;
+        }
+    }
+
     public static ArrayList<Tournament> getTournamentList(){
         ArrayList<Tournament> tournamentList = new ArrayList<Tournament>();
 

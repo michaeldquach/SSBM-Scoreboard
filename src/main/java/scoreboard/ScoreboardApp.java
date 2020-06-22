@@ -34,6 +34,14 @@ public class ScoreboardApp extends Application {
             }
         });
 
+        scorePane.getToggleConsoleButton().setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                handleToggleConsole();
+                primaryStage.sizeToScene();
+            }
+        });
+
         scorePane.getToggleChallongeButton().setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
@@ -60,6 +68,7 @@ public class ScoreboardApp extends Application {
             @Override
             public void handle(ActionEvent actionEvent) {
                 handleReset(false);
+                ConsolePane.outputText("Resetting scores.");
             }
         });
 
@@ -122,9 +131,14 @@ public class ScoreboardApp extends Application {
         view.swap();
     }
 
+    public void handleToggleConsole(){
+        model.toggleConsole();
+        view.toggleConsole(model.isToggleConsole());
+    }
+
     public void handleToggleChallonge(){
         model.toggleChallonge();
-        view.toggleChallonge();
+        view.toggleChallonge(model.isToggleChallonge());
     }
 
     public void handleSave(){
@@ -143,7 +157,7 @@ public class ScoreboardApp extends Application {
     }
 
     public void handleChallongeLogin(String username, String password){
-        handleReset(true);
+        handleReset(true);      //the only time a complete reset is called
         model.challongeLogin(username, password);
         view.challongeLogin();
     }

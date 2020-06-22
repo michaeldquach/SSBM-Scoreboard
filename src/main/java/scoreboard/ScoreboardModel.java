@@ -15,7 +15,7 @@ public class ScoreboardModel {
 
     private String P1Name, P2Name, roundString, tournamentName, commentatorName;
     private int P1Score, P2Score, P1Port, P2Port;
-    private boolean toggleChallonge, challongeLoggedIn, readyToPush;
+    private boolean toggleConsole, toggleChallonge, challongeLoggedIn, readyToPush;
     private Character P1Char, P2Char;
 
     private Participant player1, player2;
@@ -43,6 +43,7 @@ public class ScoreboardModel {
         commentatorName = null;
 
         //Fields for challonge
+        toggleConsole = true;
         toggleChallonge = true;
         challongeLoggedIn = false;
         readyToPush = false;
@@ -56,13 +57,13 @@ public class ScoreboardModel {
         matches = new ArrayList<Match>();
     }
 
-    //Generates list of tournaments from JSON. Also checks if logged in to Challonge
+    //Generates list of tournaments from JSON.
     public boolean pullTournamentList(){
         if(ChallongeAPI.getTournamentList() != null){               //Only retrieves null if failed to login. Will retrieve an array of tournaments if logged in
             tournaments = ChallongeAPI.getTournamentList();         //Note: accounts with no tournaments will still retrieve an empty array of tournaments, so that case is covered
             return true;
         }
-        return false;           //Canary to flag that we've not been able to log in
+        return false;
     }
 
     public boolean pullMatchList(){
@@ -293,9 +294,14 @@ public class ScoreboardModel {
 
     //logs into challonge and pulls tournament list
     public void challongeLogin(String username, String password){
-        ChallongeAPI.saveAPIKey(username, password);        //saves api key to keyring todo only save on successful login
-        challongeLoggedIn = pullTournamentList();        //Populates the tournament list. If we pulled the tournamentList successfully, then it means we've logged in
-        readyToPush = false;        //we aren't pushing regardless of if logged in or not
+        if(ChallongeAPI.login(password)){
+            challongeLoggedIn = true;
+            ChallongeAPI.saveAPIKey(username, password);    //saves api key to keyring if login was a success
+            pullTournamentList();        //Populates the tournament list.
+        }
+        else{
+            challongeLoggedIn = false;
+        }
     }
 
     //generates participant and match list from selected tournament to load
@@ -328,6 +334,10 @@ public class ScoreboardModel {
         return participants;
     }
 
+    public boolean isToggleConsole() {
+        return toggleConsole;
+    }
+
     public boolean isToggleChallonge() {
         return toggleChallonge;
     }
@@ -342,6 +352,10 @@ public class ScoreboardModel {
 
     public Tournament getCurrentTournament(){
         return currentTournament;
+    }
+
+    public void toggleConsole() {
+        toggleConsole = !toggleConsole;
     }
 
     public void toggleChallonge(){

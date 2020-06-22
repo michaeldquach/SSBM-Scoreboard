@@ -23,7 +23,7 @@ public class ScorePane extends Pane {
     private ComboBox<Integer> P1PortDropDown, P2PortDropDown;
     private ComboBox<Character> P1CharDropDown, P2CharDropDown;
     private TextField tournamentRoundField, tournamentNameField, commentatorsField;
-    private Button swapButton, toggleChallongeButton, saveButton, uploadButton, resetButton;
+    private Button swapButton, toggleConsoleButton, toggleChallongeButton, saveButton, uploadButton, resetButton;
     private EventHandler<ActionEvent> P1DropDownEventHandler, P2DropDownEventHandler;
 
     public ScorePane(ScoreboardModel initModel, ScoreboardView initView){
@@ -270,23 +270,27 @@ public class ScorePane extends Pane {
         swapButton.setPrefSize(60, 60);
         swapButton.relocate(270, 10);
 
+        toggleConsoleButton = new Button("Hide Logs");
+        toggleConsoleButton.setPrefSize(108, 40);
+        toggleConsoleButton.relocate(10, buttonY);
+
         toggleChallongeButton = new Button("Hide Challonge");
-        toggleChallongeButton.setPrefSize(138, 40);
-        toggleChallongeButton.relocate(10, buttonY);
+        toggleChallongeButton.setPrefSize(108, 40);
+        toggleChallongeButton.relocate(128, buttonY);
 
         saveButton = new Button("Save and Output");
-        saveButton.setPrefSize(138, 40);
-        saveButton.relocate(157, buttonY);
+        saveButton.setPrefSize(108, 40);
+        saveButton.relocate(246, buttonY);
 
         uploadButton = new Button("Upload Match");
-        uploadButton.setPrefSize(138, 40);
-        uploadButton.relocate(305, buttonY);
+        uploadButton.setPrefSize(108, 40);
+        uploadButton.relocate(364, buttonY);
 
         resetButton = new Button("Reset Match");
-        resetButton.setPrefSize(138, 40);
-        resetButton.relocate(452, buttonY);
+        resetButton.setPrefSize(108, 40);
+        resetButton.relocate(482, buttonY);
 
-        getChildren().addAll(toggleChallongeButton, saveButton, uploadButton, resetButton, swapButton);
+        getChildren().addAll(toggleConsoleButton, toggleChallongeButton, saveButton, uploadButton, resetButton, swapButton);
     }
 
     //called when selecting match from match dropdown
@@ -330,6 +334,15 @@ public class ScorePane extends Pane {
             challongePane = view.getChallongePane();
         }
         uploadButton.setDisable(!model.isReadyToPush() || !model.isToggleChallonge());
+    }
+
+    public void toggleConsole(boolean toggle){
+        if(toggle){
+            toggleConsoleButton.setText("Hide Logs");
+        }
+        else{
+            toggleConsoleButton.setText("Show Logs");
+        }
     }
 
     public void toggleChallonge(boolean toggle){
@@ -389,6 +402,7 @@ public class ScorePane extends Pane {
 
         //Complete Reset
         if(completeReset){
+            loadTournament(null);
             tournamentNameField.setText(null);
             commentatorsField.setText(null);
         }
@@ -398,6 +412,9 @@ public class ScorePane extends Pane {
     public void loadTournament(Tournament loadedTournament){
         if(loadedTournament != null){
             tournamentNameField.setText(loadedTournament.getName());        //update field for tournament name
+        }
+        else{
+            tournamentNameField.setText(null);
         }
 
         ArrayList<String> participantNames = new ArrayList<String>();       //Make array list of player strings rather than players
@@ -417,6 +434,10 @@ public class ScorePane extends Pane {
 
     public Button getSwapButton(){
         return swapButton;
+    }
+
+    public Button getToggleConsoleButton() {
+        return toggleConsoleButton;
     }
 
     public Button getToggleChallongeButton(){

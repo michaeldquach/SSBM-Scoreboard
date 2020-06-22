@@ -11,8 +11,7 @@ public class ScoreboardView extends Pane {
 
     public ScoreboardView(ScoreboardModel initModel){
         model = initModel;
-        //this.setPrefSize(610,305);      //default size
-        this.setPrefSize(610,415);
+        this.setPrefSize(610,415);      //default size
 
         consolePane = new ConsolePane(model, this);     //gotta initialize this first, has message box for errors
         consolePane.relocate(5, 305);
@@ -29,6 +28,25 @@ public class ScoreboardView extends Pane {
         update();
     }
 
+    public void resizeWindow(){
+        if(challongePane.isVisible() && consolePane.isVisible()){
+            challongePane.relocate(5, 205);
+            consolePane.relocate(5, 305);
+            this.setPrefSize(610,415);
+        }
+        else if(!challongePane.isVisible() && consolePane.isVisible()){
+            consolePane.relocate(5, 205);
+            this.setPrefSize(610,315);
+        }
+        else if(challongePane.isVisible() && !consolePane.isVisible()){
+            challongePane.relocate(5, 205);
+            this.setPrefSize(610,305);
+        }
+        else if(!challongePane.isVisible() && !consolePane.isVisible()){
+            this.setPrefSize(610,205);
+        }
+    }
+
     public void update(){
         scorePane.update();
         challongePane.update();
@@ -39,18 +57,17 @@ public class ScoreboardView extends Pane {
         update();
     }
 
-    public void toggleChallonge(){
-        boolean toggle = model.isToggleChallonge();
+    public void toggleConsole(boolean toggle){
+        scorePane.toggleConsole(toggle);
+        consolePane.toggleConsole(toggle);
+        resizeWindow();
+        update();
+    }
 
-        if(toggle){
-            setPrefSize(610,415);
-        }
-        else{
-            setPrefSize(610,415);
-        }
-
+    public void toggleChallonge(boolean toggle){
         scorePane.toggleChallonge(toggle);
         challongePane.toggleChallonge(toggle);
+        resizeWindow();
         update();
     }
 
