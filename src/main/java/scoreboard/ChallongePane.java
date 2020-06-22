@@ -74,7 +74,6 @@ public class ChallongePane extends Pane {
         matchDropDownEventHandler = new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                //System.out.println("updating from matchlist action");         //debug
                 scorePane.updatePlayersFromMatch(matchDropDown.getValue());
             }
         };
@@ -123,7 +122,7 @@ public class ChallongePane extends Pane {
         API_keyField = new PasswordField();
         API_keyField.setPromptText("Challonge API Key");
         API_keyField.setText(ChallongeAPI.readAPIKey());
-        API_keyField.setOnKeyTyped(new EventHandler<KeyEvent>() {
+        API_keyField.setOnKeyReleased(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent keyEvent) {
                 update();
@@ -144,7 +143,6 @@ public class ChallongePane extends Pane {
                 if(thisPlayerComboBox.getValue() != null && otherPlayerComboBox.getValue() != null){
                     if(thisPlayerComboBox.getValue().equals(x.getPlayer1().getName()) && otherPlayerComboBox.getValue().equals(x.getPlayer2().getName())){      //Check if player 1 and player 2 from the player drop downs matches players 1 and 2 from match x
                         if(!x.isComplete()){        //For double jeopardy cases within brackets - players might meet for a re-match, but this necessitates that one match has already been completed and can thus be overlooked
-                            //System.out.println(x);
                             matchDropDown.getSelectionModel().clearAndSelect(matchDropDown.getItems().indexOf(x));      //Select the match within the comboBox if players match
                             matchDropDown.setOnAction(matchDropDownEventHandler);       //Re-enable the event listener
                             return;         //We exit upon finding the match, no need to keep traversing
@@ -152,14 +150,12 @@ public class ChallongePane extends Pane {
                     }
                     else if(thisPlayerComboBox.getValue().equals(x.getPlayer2Name()) && otherPlayerComboBox.getValue().equals(x.getPlayer1Name())){
                         if(!x.isComplete()){
-                            //System.out.println(x);
                             matchDropDown.getSelectionModel().clearAndSelect(matchDropDown.getItems().indexOf(x));
                             matchDropDown.setOnAction(matchDropDownEventHandler);
                             return;
                         }
                     }
                     else{
-                        //System.out.println("couldn't find matching match");
                         matchDropDown.getSelectionModel().clearSelection();         //If players do not match any matches in the list, deselect the match
                     }
                 }
@@ -210,7 +206,6 @@ public class ChallongePane extends Pane {
 
     //Updates list of matches from loaded tournament
     public void loadTournament(){
-        //System.out.println("Loading tournament");       //debug
         ObservableList<Match> matchOptions = FXCollections.observableArrayList(model.getMatches());
         matchDropDown.setItems(matchOptions);       //Populate match drop down
     }

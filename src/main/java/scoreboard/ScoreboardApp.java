@@ -15,10 +15,11 @@ public class ScoreboardApp extends Application {
 
     public void start(Stage primaryStage){
         ChallongeAPI.initKeyring();
-        OBSOutput.initialize();
 
         model = ScoreboardModel.loadModel();
         view = new ScoreboardView(model);
+
+        OBSOutput.initialize();
 
         ScorePane scorePane = view.getScorePane();
         ChallongePane challongePane = view.getChallongePane();
@@ -73,7 +74,7 @@ public class ScoreboardApp extends Application {
         challongePane.getLoadTournamentButton().setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                handleLoadTournament(challongePane.getTournamentDropDown().getSelectionModel().getSelectedItem());
+                handleLoadTournament(challongePane.getTournamentDropDown().getSelectionModel().getSelectedItem(), false);
             }
         });
 
@@ -89,6 +90,7 @@ public class ScoreboardApp extends Application {
             public void handle(ActionEvent actionEvent) {
                 if(model.getCurrentTournament() != null){
                     handleOpenURL(model.getCurrentTournament().getFull_challonge_url());
+                    ConsolePane.outputText("Opening tournament bracket in browser.");
                 }
             }
         });
@@ -97,6 +99,7 @@ public class ScoreboardApp extends Application {
             @Override
             public void handle(ActionEvent actionEvent) {
                 handleOpenURL("https://challonge.com/settings/developer");
+                ConsolePane.outputText("Opening developer API page in browser.");
             }
         });
 
@@ -106,6 +109,7 @@ public class ScoreboardApp extends Application {
         primaryStage.setResizable(false);
         primaryStage.setScene(new Scene(view));
         primaryStage.centerOnScreen();
+        primaryStage.sizeToScene();
         primaryStage.show();
         view.update();
     }
@@ -128,7 +132,7 @@ public class ScoreboardApp extends Application {
     }
 
     public void handleUpload(){
-        if(model.uploadMatchInfo(false, true)){
+        if(model.uploadMatchInfo(false)){
             handleRefresh();        //updates tournament matches after pushing data
         }
     }
@@ -144,13 +148,13 @@ public class ScoreboardApp extends Application {
         view.challongeLogin();
     }
 
-    public void handleLoadTournament(Tournament loadedTournament){
+    public void handleLoadTournament(Tournament loadedTournament, boolean refresh){
         model.loadTournament(loadedTournament);        //loads the selected tournament from the comboBox and pulls data from it
-        view.loadTournament(loadedTournament);
+        view.loadTournament(loadedTournament, refresh);
     }
 
     public void handleRefresh(){
-        handleLoadTournament(model.getCurrentTournament());
+        handleLoadTournament(model.getCurrentTournament(), true);
         view.refresh(model.getCurrentTournament());
     }
 

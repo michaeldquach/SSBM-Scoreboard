@@ -94,7 +94,6 @@ public class ScorePane extends Pane {
         P1DropDownEventHandler = new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                //System.out.println("updating from p1listcombo");
                 challongePane.updateMatchFromPlayers(P1DropDown, P2DropDown);
 
                 if(model.isReadyToPush()){              //flags if change is made to field required to push to challonge, without saving that change
@@ -114,7 +113,6 @@ public class ScorePane extends Pane {
         P2DropDownEventHandler = new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                //System.out.println("updating from p2listcombo");
                 challongePane.updateMatchFromPlayers(P2DropDown, P1DropDown);
 
                 if(model.isReadyToPush()){              //flags if change is made to field required to push to challonge, without saving that change
@@ -345,8 +343,6 @@ public class ScorePane extends Pane {
 
     //Swap info in fields for each player
     public void swap(){
-        //System.out.println("Swapping");         //debug
-
         String tempName = P1DropDown.getValue();
         int tempScore = P1ScoreSpinner.getValue();
         Character tempChar = P1CharDropDown.getValue();

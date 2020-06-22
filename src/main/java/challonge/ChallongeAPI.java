@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.javakeyring.BackendNotSupportedException;
 import com.github.javakeyring.Keyring;
 import com.github.javakeyring.PasswordAccessException;
+import scoreboard.ConsolePane;
 
 import java.awt.*;
 import java.io.BufferedReader;
@@ -14,7 +15,6 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
 
 public class ChallongeAPI {
@@ -22,10 +22,12 @@ public class ChallongeAPI {
     private static final ObjectMapper mapper = new ObjectMapper();
 
     public static String send(String requestURL, String method, String payload, int timeout){
+        int responseCode = 0;
         try{
             URL url = new URL(requestURL);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setConnectTimeout(timeout);
+            responseCode = connection.getResponseCode();
 
             connection.setDoInput(true);
             connection.setDoOutput(true);
@@ -50,7 +52,25 @@ public class ChallongeAPI {
         }
 
         catch (IOException e) {
-            e.printStackTrace();
+            if(responseCode == 401){        //IOException stems from wrong key. Should really be the only error the user sees
+                ConsolePane.outputText(String.format("Error %d: Invalid API Key.", responseCode));
+            }
+            if(responseCode == 404){
+                ConsolePane.outputText(String.format("Error %d: Object not found within account scope.", responseCode));
+            }
+            if(responseCode == 406){
+                ConsolePane.outputText(String.format("Error %d: Request format is not supported.", responseCode));
+            }
+            if(responseCode == 422){
+                ConsolePane.outputText(String.format("Error %d: Validation error for create or update method.", responseCode));
+            }
+            if(responseCode == 500){
+                ConsolePane.outputText(String.format("Error %d: Error on Challonge's end.", responseCode));
+            }
+            else{
+                ConsolePane.outputText(String.format("Error %d.", responseCode));
+                //e.printStackTrace();
+            }
             return null;
         }
     }
@@ -63,11 +83,12 @@ public class ChallongeAPI {
 
     //no payload required when getting tournament info
     public static String get(String url, int timeout){
+        int responseCode = 0;
         try{
             URL website = new URL(url + "?api_key=" + readAPIKey());
-            //System.out.println(website);      //Debug to get url used to interface with API
-            URLConnection connection = website.openConnection();
+            HttpURLConnection connection = (HttpURLConnection) website.openConnection();
             connection.setConnectTimeout(timeout);
+            responseCode = connection.getResponseCode();
 
             BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
             StringBuilder response = new StringBuilder();
@@ -79,8 +100,25 @@ public class ChallongeAPI {
             return response.toString();
         }
         catch (IOException e) {
-            System.out.println("Invalid API Key.");     //assumes that the IOException stems from wrong key todo make this output somewhere in GUI
-            //e.printStackTrace();
+            if(responseCode == 401){        //IOException stems from wrong key. Should really be the only error the user sees
+                ConsolePane.outputText(String.format("Error %d: Invalid API Key.", responseCode));
+            }
+            if(responseCode == 404){
+                ConsolePane.outputText(String.format("Error %d: Object not found within account scope.", responseCode));
+            }
+            if(responseCode == 406){
+                ConsolePane.outputText(String.format("Error %d: Request format is not supported.", responseCode));
+            }
+            if(responseCode == 422){
+                ConsolePane.outputText(String.format("Error %d: Validation error for create or update method.", responseCode));
+            }
+            if(responseCode == 500){
+                ConsolePane.outputText(String.format("Error %d: Error on Challonge's end.", responseCode));
+            }
+            else{
+                ConsolePane.outputText(String.format("Error %d.", responseCode));
+                //e.printStackTrace();
+            }
             return null;
         }
     }
@@ -114,8 +152,8 @@ public class ChallongeAPI {
             }
         }
         catch (JsonProcessingException e) {
-            System.out.println("Error parsing JSON file.");
-            e.printStackTrace();
+            ConsolePane.outputText("Error parsing JSON file.");
+            //e.printStackTrace();
         }
         return tournamentList;
     }
@@ -135,8 +173,8 @@ public class ChallongeAPI {
             }
         }
         catch (JsonProcessingException e) {
-            System.out.println("Error parsing JSON file.");
-            e.printStackTrace();
+            ConsolePane.outputText("Error parsing JSON file.");
+            //e.printStackTrace();
         }
         return matchList;
     }
@@ -156,8 +194,8 @@ public class ChallongeAPI {
             }
         }
         catch (JsonProcessingException e) {
-            System.out.println("Error parsing JSON file.");
-            e.printStackTrace();
+            ConsolePane.outputText("Error parsing JSON file.");
+            //e.printStackTrace();
         }
         return participantList;
     }
@@ -174,7 +212,7 @@ public class ChallongeAPI {
                 Desktop.getDesktop().browse(new URL(url).toURI());
             }
         } catch (IOException | URISyntaxException e) {
-            e.printStackTrace();
+            ConsolePane.outputText("Error opening URL.");
         }
     }
 
@@ -190,7 +228,7 @@ public class ChallongeAPI {
             }
         }
         catch (BackendNotSupportedException | PasswordAccessException e) {
-            e.printStackTrace();
+            e.printStackTrace();        //shouldn't print to console pane
         }
     }
 

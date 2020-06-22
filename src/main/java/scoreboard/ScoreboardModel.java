@@ -22,6 +22,8 @@ public class ScoreboardModel {
     private Tournament currentTournament;
     private Match currentMatch;
 
+    public static final boolean DEBUG = true;
+
     public ScoreboardModel(){
         //Fields for OBSOutput
         P1Name = null;
@@ -52,9 +54,6 @@ public class ScoreboardModel {
         tournaments = new ArrayList<Tournament>();
         participants = new ArrayList<Participant>();
         matches = new ArrayList<Match>();
-
-        //OBSOutput.createOutputText("testing 2", "hi");
-        OBSOutput.initialize();
     }
 
     //Generates list of tournaments from JSON. Also checks if logged in to Challonge
@@ -99,7 +98,7 @@ public class ScoreboardModel {
         return null;
     }
 
-    public void DEBUGTESTING(boolean DEBUG){
+    public void DEBUGTESTING(){
         if(DEBUG){
             if(readyToPush){
                 System.out.println("Fields required for challonge ready to push.");     //debug
@@ -170,31 +169,31 @@ public class ScoreboardModel {
         OBSOutput.writeOutputText("Commentator Tag", commentatorName);
     }
 
-    //todo make real error messages, confirmation before pushing
     //refreshes match list after pushing info by calling refresh() (refresh() calls loadTournament(currentTournament) in model)
-    public boolean uploadMatchInfo(boolean tiesEnabled, boolean PUSHINGFORREAL){
+    public boolean uploadMatchInfo(boolean tiesEnabled){
         if(challongeLoggedIn && readyToPush){     //ready to push checks that p1, p2, curTourney, and curMatch all not null
             Integer winnerID;
             if(player1.getId() == currentMatch.getPlayer1_id()){        //if player1's id in the scoreboard matches player1 in challonge
                 if(P1Score > P2Score){        //if player1 won the match
                     winnerID = player1.getId();
+                    ConsolePane.outputText(String.format("[%s] results uploaded. %s: %d, %s: %d.", currentMatch.getRoundString(currentTournament.getMaxRound()), player1.getName() + " (W)", P1Score, player2.getName(), P2Score));
                 }
                 else if(P2Score > P1Score){       //if player2 won the match
                     winnerID = player2.getId();
+                    ConsolePane.outputText(String.format("[%s] results uploaded. %s: %d, %s: %d.", currentMatch.getRoundString(currentTournament.getMaxRound()), player1.getName(), P1Score, player2.getName() + " (W)", P2Score));
                 }
                 else{
                     if(tiesEnabled){
                         winnerID = null;
                     }
                     else{
-                        System.out.println("Scores are tied, and no winner can be selected. Please update the scores and resubmit to Challonge.");
+                        ConsolePane.outputText("Scores are tied, and no winner can be selected. Please update the scores and resubmit to Challonge.");
                         return false;
                     }
                 }
-                if(PUSHINGFORREAL){
+                if(!DEBUG){
                     ChallongeAPI.putMatchResults(currentTournament.getId(), currentMatch.getId(), P1Score, P2Score, winnerID);
                 }
-                System.out.println(player1.getName() + ": " + P1Score + ", " + player2.getName() + ": " + P2Score + ". Winner: " + findPlayer(winnerID));         //debug
                 reset(false);
                 return true;
             }
@@ -202,23 +201,24 @@ public class ScoreboardModel {
             else if(player1.getId() == currentMatch.getPlayer2_id()){       //if player1's id matches player2 in challonge (because of ordering)
                 if(P1Score > P2Score){        //if player1 won the match
                     winnerID = player1.getId();
+                    ConsolePane.outputText(String.format("[%s] results uploaded. %s: %d, %s: %d.", currentMatch.getRoundString(currentTournament.getMaxRound()), player1.getName() + " (W)", P1Score, player2.getName(), P2Score));
                 }
                 else if(P2Score > P1Score){       //if player2 won the match
                     winnerID = player2.getId();
+                    ConsolePane.outputText(String.format("[%s] results uploaded. %s: %d, %s: %d.", currentMatch.getRoundString(currentTournament.getMaxRound()), player1.getName(), P1Score, player2.getName() + " (W)", P2Score));
                 }
                 else{
                     if(tiesEnabled){
                         winnerID = null;
                     }
                     else{
-                        System.out.println("Scores are tied, and no winner can be selected. Please update the scores and resubmit to Challonge.");
+                        ConsolePane.outputText("Scores are tied, and no winner can be selected. Please update the scores and resubmit to Challonge.");
                         return false;
                     }
                 }
-                if(PUSHINGFORREAL){
+                if(!DEBUG){
                     ChallongeAPI.putMatchResults(currentTournament.getId(), currentMatch.getId(), P2Score, P1Score, winnerID);
                 }
-                System.out.println(player1.getName() + ": " + P1Score + ", " + player2.getName() + ": " + P2Score + ". Winner: " + findPlayer(winnerID));
                 reset(false);
                 return true;
             }
@@ -257,7 +257,7 @@ public class ScoreboardModel {
         //check if all fields are present, flags ready for pushing. Only instance where readyToPush can be set to true
         readyToPush = this.currentTournament != null && this.currentMatch != null && this.player1 != null && this.player2 != null;
 
-        DEBUGTESTING(false);
+        DEBUGTESTING();
         outputToOBS();      //write to text files for OBS
     }
 
@@ -293,9 +293,9 @@ public class ScoreboardModel {
 
     //logs into challonge and pulls tournament list
     public void challongeLogin(String username, String password){
-        ChallongeAPI.saveAPIKey(username, password);        //saves api key to keyring
+        ChallongeAPI.saveAPIKey(username, password);        //saves api key to keyring todo only save on successful login
         challongeLoggedIn = pullTournamentList();        //Populates the tournament list. If we pulled the tournamentList successfully, then it means we've logged in
-        readyToPush = false;
+        readyToPush = false;        //we aren't pushing regardless of if logged in or not
     }
 
     //generates participant and match list from selected tournament to load
@@ -350,6 +350,6 @@ public class ScoreboardModel {
 
     public void setReadyToPush(boolean flag){
         readyToPush = flag;
-        //System.out.println("Setting flag: " + readyToPush);           //debug
+        if(ScoreboardModel.DEBUG){System.out.println("Setting flag: " + readyToPush); }     //debug
     }
 }

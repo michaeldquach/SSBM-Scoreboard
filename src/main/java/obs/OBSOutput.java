@@ -1,5 +1,8 @@
 package obs;
 
+import scoreboard.ConsolePane;
+import scoreboard.ScoreboardModel;
+
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -9,6 +12,8 @@ import java.nio.file.StandardCopyOption;
 public class OBSOutput {
     private static final String[] fileNames = {"P1 Tag", "P2 Tag", "P1 Score", "P2 Score", "P1 Port", "P2 Port", "P1 Char", "P2 Char", "Bracket Round", "Tournament Name", "Commentator Tag"};
 
+    //todo make it check if these files exist before overwriting
+    //also initialize image files
     public static boolean initialize(){
         try{
             for(String fileName:fileNames){
@@ -19,8 +24,8 @@ public class OBSOutput {
             return true;
         }
         catch (IOException e) {
-            System.out.println("Error initializing output files!");
-            e.printStackTrace();
+            ConsolePane.outputText("Error initializing output files!");
+            //e.printStackTrace();
         }
         return false;
     }
@@ -36,15 +41,16 @@ public class OBSOutput {
             }
             else{
                 aFile.println();
-                //System.out.println("content is null");        //debug
+
+                if(ScoreboardModel.DEBUG){System.out.println("Content is null.");}        //debug
             }
 
             aFile.close();
             return true;
         }
         catch (IOException e) {
-            System.out.println(String.format("Couldn't write to file: %s.txt.", fileName));
-            e.printStackTrace();
+            ConsolePane.outputText(String.format("Couldn't write to file: %s.txt.", fileName));
+            //e.printStackTrace();
         }
         return false;
     }
@@ -63,13 +69,13 @@ public class OBSOutput {
 
             Path target = Paths.get(String.format("OBS Output/%s.png", fileNameOutput));
 
-            //System.out.println("Copying " + source + " to " + target);      //debug
+            if(ScoreboardModel.DEBUG){System.out.println("Copying " + source + " to " + target);}       //debug
 
             Files.copy(source, target, StandardCopyOption.REPLACE_EXISTING);
         }
         catch (Exception e) {
-            System.out.println(String.format("Couldn't write to file: %s.png.", fileNameOutput));
-            e.printStackTrace();
+            ConsolePane.outputText(String.format("Couldn't write to file: %s.png.", fileNameOutput));
+            //e.printStackTrace();
         }
         return false;
     }

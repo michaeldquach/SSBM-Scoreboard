@@ -26,7 +26,7 @@ public class Character {
                 characters.add(new Character(i, characterNames[i], new Image(String.format("Images/GUI/%02d %s.png", i, characterNames[i]))));
             }
             catch (Exception e) {
-                System.out.println("Error finding icon for: " + characterNames[i]);
+                ConsolePane.outputText(String.format("Error finding icon for: %s.", characterNames[i]));
             }
         }
 
