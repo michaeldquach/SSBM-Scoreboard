@@ -36,4 +36,4 @@ Text files and images are located in the folder "OBS Output". To link them to OB
 
 with the included file allows OBS to poll text files every 20 ms rather than the default 1000 ms, allowing the overlay to refresh     faster when output files are updated. 
 
-See here: https://obsproject.com/forum/threads/read-from-text-file-refresh-rate.73589/post-460054. 
+See here: https://obsproject.com/forum/threads/read-from-text-file-refresh-rate.73589/post-460054
