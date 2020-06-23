@@ -24,3 +24,16 @@ The program can be used solely to update OBS overlays, if TO's do not wish to in
 ## OBS Overlay
 
 Text files and images are located in the folder "OBS Output". To link them to OBS, add them as a text or image source to your scene. Ensure "Read from file" is ticked.
+
+## Extras
+
+* A sample OBS scene with text files and image files linked to the overlay has been included.
+
+#### Use this at your own risk.
+
+* Replacing the existing obs-text.dll at 
+>C:\Program Files\obs-studio\obs-plugins\64bit 
+
+with the included file allows OBS to poll text files every 20 ms rather than the default 1000 ms, allowing the overlay to refresh     faster when output files are updated. 
+
+See here: https://obsproject.com/forum/threads/read-from-text-file-refresh-rate.73589/post-460054. 
