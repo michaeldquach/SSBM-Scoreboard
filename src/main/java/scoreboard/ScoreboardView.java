@@ -29,22 +29,30 @@ public class ScoreboardView extends Pane {
     }
 
     public void resizeWindow(){
-        if(challongePane.isVisible() && consolePane.isVisible()){
-            challongePane.relocate(5, 205);
-            consolePane.relocate(5, 305);
-            this.setPrefSize(610,415);
+        double totalHeight, scorePaneHeight, challongePaneHeight, consolePaneHeight;
+
+        scorePaneHeight = scorePane.getHeight() + 5;
+
+        if(challongePane.isVisible()){
+            challongePaneHeight = challongePane.getHeight() + 5;
         }
-        else if(!challongePane.isVisible() && consolePane.isVisible()){
-            consolePane.relocate(5, 205);
-            this.setPrefSize(610,315);
+        else{
+            challongePaneHeight = 0;
         }
-        else if(challongePane.isVisible() && !consolePane.isVisible()){
-            challongePane.relocate(5, 205);
-            this.setPrefSize(610,305);
+
+        if(consolePane.isVisible()){
+            consolePaneHeight = consolePane.getHeight() + 5;
         }
-        else if(!challongePane.isVisible() && !consolePane.isVisible()){
-            this.setPrefSize(610,205);
+        else{
+            consolePaneHeight = 0;
         }
+
+        totalHeight = scorePaneHeight + challongePaneHeight + consolePaneHeight;
+
+        challongePane.relocate(5, scorePaneHeight);     //always directly below the scorepane
+        consolePane.relocate(5, scorePaneHeight + challongePaneHeight);     //always at the very bottom
+
+        this.setPrefSize(610, totalHeight);
     }
 
     public void update(){

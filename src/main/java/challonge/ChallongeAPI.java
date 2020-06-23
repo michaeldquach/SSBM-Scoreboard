@@ -27,7 +27,6 @@ public class ChallongeAPI {
             URL url = new URL(requestURL);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setConnectTimeout(timeout);
-            responseCode = connection.getResponseCode();
 
             connection.setDoInput(true);
             connection.setDoOutput(true);
@@ -37,6 +36,9 @@ public class ChallongeAPI {
             OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream(), "UTF-8");
             writer.write(payload);
             writer.close();
+
+            responseCode = connection.getResponseCode();            //to get error codes
+
             BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
             StringBuffer jsonString = new StringBuffer();
 
@@ -68,7 +70,7 @@ public class ChallongeAPI {
                 ConsolePane.outputText(String.format("Error %d: Error on Challonge's end.", responseCode));
             }
             else{
-                ConsolePane.outputText(String.format("Error %d.", responseCode));
+                //ConsolePane.outputText(String.format("Error %d.", responseCode));         //why does this also fire along with an error code from above?
                 //e.printStackTrace();
             }
             return null;
@@ -97,6 +99,7 @@ public class ChallongeAPI {
                 response.append(inputLine);
             }
             in.close();
+            connection.disconnect();
             return response.toString();
         }
         catch (IOException e) {
@@ -116,7 +119,7 @@ public class ChallongeAPI {
                 ConsolePane.outputText(String.format("Error %d: Error on Challonge's end.", responseCode));
             }
             else{
-                ConsolePane.outputText(String.format("Error %d.", responseCode));
+                //ConsolePane.outputText(String.format("Error %d.", responseCode));
                 //e.printStackTrace();
             }
             return null;
@@ -142,6 +145,7 @@ public class ChallongeAPI {
             HttpURLConnection connection = (HttpURLConnection) website.openConnection();
             connection.setConnectTimeout(timeout);
             responseCode = connection.getResponseCode();
+            connection.disconnect();
 
             return responseCode == 200;     //200 is response code for successful log in
         }

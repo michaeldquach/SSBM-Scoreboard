@@ -22,7 +22,7 @@ public class ScoreboardModel {
     private Tournament currentTournament;
     private Match currentMatch;
 
-    public static final boolean DEBUG = true;
+    public static final boolean DEBUG = false;
 
     public ScoreboardModel(){
         //Fields for OBSOutput
@@ -359,7 +359,7 @@ public class ScoreboardModel {
     }
 
     public void toggleChallonge(){
-        toggleChallonge = !toggleChallonge;         //todo make other functions care if challonge toggled, trim some fat
+        toggleChallonge = !toggleChallonge;
     }
 
     public void setReadyToPush(boolean flag){
